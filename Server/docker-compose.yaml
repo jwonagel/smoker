@@ -3,14 +3,14 @@ version: '3.1'
 services:
 
   mysql:
+    container_name: mysql
     image: nagel/docker-raspberry-pi-mariadb:10.1.37
-    hostname: db
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_Password}
     volumes:
       - ${Volume}:/var/lib/mysql
     networks:
-      - smoker_net
+      - smokernet
     ports:
       - 3306:3306
     deploy:
@@ -21,12 +21,27 @@ services:
   
   adminer:
     image: adminer
+    container_name: adminer
     restart: always
     networks: 
-      - smoker_net
+      - smokernet
     ports:
       - 8080:8080
 
+  api:
+    container_name: service
+    build: 
+      context: ./api
+    networks: 
+      - smokernet
+    depends_on: 
+      - 'mysql'
+    ports: 
+      - 9080:80
+      - 9081:443
+    environment: 
+      - connectionString=${connectionString}
+
 
 networks:
-  smoker_net:
+  smokernet:
