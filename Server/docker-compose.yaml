@@ -6,9 +6,9 @@ services:
     image: nagel/docker-raspberry-pi-mariadb:10.1.37
     hostname: db
     environment:
-      - MYSQL_ROOT_PASSWORD=SetThisToSomethingStrong!
+      - MYSQL_ROOT_PASSWORD=${MYSQL_Password}
     volumes:
-      - /home/pi/db/lib/mysql:/var/lib/mysql
+      - ${Volume}:/var/lib/mysql
     networks:
       - smoker_net
     ports:
@@ -18,6 +18,15 @@ services:
         local.description: "db"
       restart_policy:
         condition: on-failure
+  
+  adminer:
+    image: adminer
+    restart: always
+    networks: 
+      - smoker_net
+    ports:
+      - 8080:8080
+
 
 networks:
   smoker_net:
