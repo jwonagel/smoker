@@ -2,14 +2,22 @@ version: '3.1'
 
 services:
 
-  db:
-    image: mariadb
-    restart: always
+  mysql:
+    image: nagel/docker-raspberry-pi-mariadb:10.1.37
+    hostname: db
     environment:
-      MYSQL_ROOT_PASSWORD: example
-
-  adminer:
-    image: adminer
-    restart: always
+      - MYSQL_ROOT_PASSWORD=SetThisToSomethingStrong!
+    volumes:
+      - /home/pi/db/lib/mysql:/var/lib/mysql
+    networks:
+      - smoker_net
     ports:
-      - 8080:8080
+      - 3306:3306
+    deploy:
+      labels:
+        local.description: "db"
+      restart_policy:
+        condition: on-failure
+
+networks:
+  smoker_net:
