@@ -31,9 +31,7 @@ namespace api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            System.Console.WriteLine("Started");
             var connectionString = Environment.GetEnvironmentVariable("connectionString");
-            System.Console.WriteLine(connectionString);
             services.AddDbContext<SmokerDBContext>(options => options      
                 .UseMySql(connectionString,      
                     mysqlOptions =>      
@@ -48,8 +46,6 @@ namespace api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Smoker API", Version = "v1" });
             });
-
-            
         }
           
 
