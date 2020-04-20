@@ -23,6 +23,9 @@ ADDRESS = 0x27
 
 import smbus
 from time import sleep
+from threading import Lock
+
+lock = Lock()
 
 class i2c_device:
    def __init__(self, addr, port=I2CBUS):
@@ -117,7 +120,12 @@ class lcd:
       self.lcd_write(LCD_DISPLAYCONTROL | LCD_DISPLAYON)
       self.lcd_write(LCD_CLEARDISPLAY)
       self.lcd_write(LCD_ENTRYMODESET | LCD_ENTRYLEFT)
+      self.current_line0 = self.__get_blank_line()
+      self.current_line1 = self.__get_blank_line()
       sleep(0.2)
+
+   def __get_blank_line(self):
+      return [' ' for i in range(16)]
 
 
    # clocks EN to latch command
@@ -142,26 +150,60 @@ class lcd:
       self.lcd_write_four_bits(mode | (charvalue & 0xF0))
       self.lcd_write_four_bits(mode | ((charvalue << 4) & 0xF0))
   
+   def lcd_display_string_thread_save(self, string, line=1, pos=0):
+      with lock:
+         self.lcd_display_string_update(string, line, pos)
+
+
+   # put string function with optional char positioning
+   def lcd_display_string_update(self, string, line=1, pos=0):
+      if line == 1:
+         pos_new = pos
+      elif line == 2:
+         pos_new = 0x40 + pos
+      elif line == 3:
+         pos_new = 0x14 + pos
+      elif line == 4:
+         pos_new = 0x54 + pos
+
+      self.lcd_write(0x80 + pos_new)
+      p = pos_new
+      
+      old_text = self.current_line0 if line == 1 else self.current_line1
+      for idx in range(16):
+         old_char = old_text[idx]
+         new_char = ' ' if len(string) < idx + 1 else string[idx]
+         if old_char != new_char:
+            self.lcd_write(0x80 + p)
+            self.lcd_write(ord(new_char), Rs)
+            old_text[idx] = new_char
+         p += 1
+
+
+
    # put string function with optional char positioning
    def lcd_display_string(self, string, line=1, pos=0):
-    if line == 1:
-      pos_new = pos
-    elif line == 2:
-      pos_new = 0x40 + pos
-    elif line == 3:
-      pos_new = 0x14 + pos
-    elif line == 4:
-      pos_new = 0x54 + pos
+      if line == 1:
+         pos_new = pos
+      elif line == 2:
+         pos_new = 0x40 + pos
+      elif line == 3:
+         pos_new = 0x14 + pos
+      elif line == 4:
+         pos_new = 0x54 + pos
 
-    self.lcd_write(0x80 + pos_new)
+      self.lcd_write(0x80 + pos_new)
 
-    for char in string:
-      self.lcd_write(ord(char), Rs)
+      for char in string:
+         self.lcd_write(ord(char), Rs)
 
    # clear lcd and set to home
    def lcd_clear(self):
-      self.lcd_write(LCD_CLEARDISPLAY)
-      self.lcd_write(LCD_RETURNHOME)
+      self.current_line0 = self.__get_blank_line()
+      self.current_line1 = self.__get_blank_line()
+      with lock:
+         self.lcd_write(LCD_CLEARDISPLAY)
+         self.lcd_write(LCD_RETURNHOME)
 
    # define backlight on/off (lcd.backlight(1); off= lcd.backlight(0)
    def backlight(self, state): # for state, 1 = on, 0 = off
