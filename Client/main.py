@@ -6,6 +6,7 @@ import swagger_client
 from swagger_client.rest import ApiException
 import datetime
 from menu import Main_menu
+import settings as sett
 
 gpio = smoker_gpio()
 mylcd = lcd_driver.lcd()
@@ -44,8 +45,9 @@ def create_temperatur_menu():
 
 cnt = 0
 
+settings = sett.read_settings()
 
-main_menu = Main_menu(mylcd.lcd_display_string_thread_save, mylcd.lcd_clear, gpio)
+main_menu = Main_menu(mylcd.lcd_display_string_thread_save, mylcd.lcd_clear, gpio, settings)
 temp_menu = main_menu.get_temp_menu()
 
 configuration = swagger_client.Configuration()

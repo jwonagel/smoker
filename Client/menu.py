@@ -1,26 +1,19 @@
 import numpy as np
 from time import sleep
+from settings import Settings
 
 
-class Settings:
-
-    def __init__(self):
-        self.open_close_treshold = 120
-        self.is_auto_mode = True
-        self.fire_notification_temperatur = 120
-        self.temperatur_update_cycle_seconds = 30
         
 
 
 class Main_menu:
 
-    def __init__(self, write_function, clear_function, gpio):
-        settings = Settings()
-
+    def __init__(self, write_function, clear_function, gpio, settings):
         self.menu_items = []
         self.menu_items.append(Temparatur_menu(write_function, clear_function))
         self.menu_items.append(Manuel_mode_menu(write_function, clear_function, gpio, settings))
         self.menu_items.append(Auto_mode_menu(write_function, clear_function, gpio, settings))
+        self.menu_items.append(Info_menu(write_function, clear_function, settings))
 
         self.gpio = gpio
         self.current_item = 0
@@ -65,6 +58,29 @@ class Abstract_menu_item:
 
     def on_down_pressed(self):
         pass
+
+
+class Info_menu(Abstract_menu_item):
+
+    def __init__(self, write_function, clear_function, settings):
+        super().__init__(write_function, clear_function)
+        self.settings = settings
+        self.pos = 0
+
+    
+    def activate(self):
+        super().activate()
+        self.pos = 0
+        self.write_function('Info Menu')
+        self.write_function('up/down for info', 2)
+
+
+    def on_up_pressed(self):
+        pass
+
+    def on_down_pressed(self):
+        pass
+
 
 
 class Auto_mode_menu(Abstract_menu_item):
