@@ -16,6 +16,8 @@ using Pomelo.EntityFrameworkCore.MySql.Storage;
 using Microsoft.OpenApi.Models;
 using api.Model.Dababase;
 using api.Services;
+using AutoMapper;
+using api.Model;
 
 namespace api
 {
@@ -37,7 +39,16 @@ namespace api
                     mysqlOptions =>      
                         mysqlOptions.ServerVersion(new ServerVersion(new Version(10, 4, 6), ServerType.MariaDb))));  
 
-            
+
+              var mappingConfig = new MapperConfiguration(mc =>
+                {
+                    mc.AddProfile(new AutoMapping());
+                });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+
+
+            services.AddSingleton(mapper);
             services.AddScoped<ISmokerService, SmokerService>();
             services.AddControllers();
 

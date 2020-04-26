@@ -10,7 +10,7 @@ services:
     volumes:
       - ${Volume}:/var/lib/mysql
     networks:
-      - smokernet
+      - smokernetx
     ports:
       - 3306:3306
     deploy:
@@ -24,27 +24,12 @@ services:
     container_name: adminer
     restart: always
     networks: 
-      - smokernet
+      - smokernetx
     ports:
       - 8080:8080
 
-  api:
-    container_name: service
-    build: 
-      context: ./api
-    networks: 
-      - smokernet
-    depends_on: 
-      - 'mysql'
-    ports: 
-      - 9080:80
-      - 9081:443
-    environment: 
-      - connectionString=${connectionString}
-    deploy:
-      restart_policy:
-        condition: on-failure
+
 
 
 networks:
-  smokernet:
+  smokernetx:

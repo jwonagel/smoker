@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Model.Dababase;
 
 namespace api.Migrations
 {
     [DbContext(typeof(SmokerDBContext))]
-    partial class SmokerDBContextModelSnapshot : ModelSnapshot
+    [Migration("20200426155123_AlterSettings")]
+    partial class AlterSettings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

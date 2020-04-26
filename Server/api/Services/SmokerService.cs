@@ -1,7 +1,10 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using api.Model.Dababase;
 using api.Model.Smoker;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Services
 {
@@ -9,16 +12,22 @@ namespace api.Services
     public interface ISmokerService
     {
          Task<bool> AddMessurement(MeasurementSmoker measurement);
+
+
+         SettingsSmoker CurrentActiveSettings();
+
     }
 
     public class SmokerService : ISmokerService
     {
 
-        private SmokerDBContext _context;
+        private readonly SmokerDBContext _context;
+        private readonly IMapper _mapper;
 
-        public SmokerService(SmokerDBContext context)
+        public SmokerService(SmokerDBContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<bool> AddMessurement(MeasurementSmoker measurement)
@@ -31,6 +40,17 @@ namespace api.Services
             return await _context.SaveChangesAsync() == 1;            
         }
 
+        public SettingsSmoker CurrentActiveSettings()
+        {
+            var currentSetting = _context.Settings
+                .Include(s => s.Alerts)
+                .OrderByDescending(s => s.LastSettingsActivation)
+                .FirstOrDefault();
+
+            var res = _mapper.Map<SettingsSmoker>(currentSetting);
+
+            return res;
+        }
 
         private Measurement MapToMeasurement(MeasurementSmoker measurement)
         {

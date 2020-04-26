@@ -9,5 +9,9 @@ namespace api.Model.Dababase
 
         public DbSet<Measurement> Measurements { get; set; }
 
+        public DbSet<Settings> Settings { get; set; }
+
+        public DbSet<Alert> Alerts { get; set; }
+
     }
 }

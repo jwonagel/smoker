@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Model.Dababase;
 
 namespace api.Migrations
 {
     [DbContext(typeof(SmokerDBContext))]
-    partial class SmokerDBContextModelSnapshot : ModelSnapshot
+    [Migration("20200423213502_Settings")]
+    partial class Settings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,7 +31,7 @@ namespace api.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("SensorId")
-                        .HasColumnName("SENSOR_ID")
+                        .HasColumnName("SENOR_ID")
                         .HasColumnType("int");
 
                     b.Property<Guid>("SettingsId")
@@ -105,10 +107,6 @@ namespace api.Migrations
                     b.Property<bool>("IsAutoMode")
                         .HasColumnName("IS_AUTO_MODE")
                         .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTime>("LastSettingsActivation")
-                        .HasColumnName("LAST_SETTINGS_ACTIVATION")
-                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("LastSettingsUpdate")
                         .HasColumnName("LAST_SETTINGS_UPDATE")
