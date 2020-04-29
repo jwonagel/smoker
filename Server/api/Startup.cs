@@ -19,6 +19,9 @@ using api.Services;
 using AutoMapper;
 using api.Model;
 
+
+// dotnet new is4aspid --force -n foo
+
 namespace api
 {
     public class Startup
