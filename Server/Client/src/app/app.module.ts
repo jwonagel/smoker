@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -22,6 +22,24 @@ import { TemperaturPipe } from './pipes/temperatur.pipe';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faThermometerHalf, faFireAlt, faBacon, faClock } from '@fortawesome/free-solid-svg-icons';
 import { SensorItemComponent } from './overview/sensor-item/sensor-item.component';
+import { AuthModule, LogLevel, OidcConfigService } from 'angular-auth-oidc-client';
+
+
+export function configureAuth(oidcConfigService: OidcConfigService) {
+  return () =>
+      oidcConfigService.withConfig({
+          stsServer: environment.stsServer,
+          redirectUrl: 'https://localhost:4200/home',
+          postLogoutRedirectUri: window.location.origin,
+          clientId: 'spa',
+          scope: 'openid profile email smoker_api.read',
+          responseType: 'code',
+          silentRenew: true,
+          silentRenewUrl: `${window.location.origin}/silent-renew.html`,
+          logLevel: LogLevel.Debug,
+      });
+}
+
 
 @NgModule({
   declarations: [
@@ -46,10 +64,18 @@ import { SensorItemComponent } from './overview/sensor-item/sensor-item.componen
     MatListModule,
     ApiModule,
     HttpClientModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    AuthModule.forRoot(),
   ],
   providers: [
-    {provide: BASE_PATH, useValue: environment.API_BASE_PATH}
+    {provide: BASE_PATH, useValue: environment.API_BASE_PATH},
+     OidcConfigService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: configureAuth,
+      deps: [OidcConfigService],
+      multi: true,
+    }
   ],
   bootstrap: [
     AppComponent,

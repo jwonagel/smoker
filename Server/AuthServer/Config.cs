@@ -14,13 +14,17 @@ namespace AuthServer
             {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
+                new IdentityResources.Email(),
             };
 
 
         public static IEnumerable<ApiResource> Apis =>
             new ApiResource[]
             {
-                new ApiResource("api1", "My API #1")
+                new ApiResource("smoker_api", "Smoker API")
+                {
+                    Scopes = {new Scope("smoker_api.read")}
+                }
             };
 
 
@@ -28,58 +32,51 @@ namespace AuthServer
             new Client[]
             {
                 // client credentials flow client
-                new Client
-                {
-                    ClientId = "client",
-                    ClientName = "Client Credentials Client",
+                // new Client
+                // {
+                //     ClientId = "client",
+                //     ClientName = "Client Credentials Client",
 
-                    AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    ClientSecrets = { new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256()) },
+                //     AllowedGrantTypes = GrantTypes.ClientCredentials,
+                //     ClientSecrets = { new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256()) },
 
-                    AllowedScopes = { "smoker_api" }
-                },
+                //     AllowedScopes = { "smoker_api" }
+                // },
 
-                // MVC client using code flow + pkce
-                new Client
-                {
-                    ClientId = "mvc",
-                    ClientName = "MVC Client",
+                // // MVC client using code flow + pkce
+                // new Client
+                // {
+                //     ClientId = "mvc",
+                //     ClientName = "MVC Client",
 
-                    AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
-                    RequirePkce = true,
-                    ClientSecrets = { new Secret("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()) },
+                //     AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
+                //     RequirePkce = true,
+                //     ClientSecrets = { new Secret("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()) },
 
-                    RedirectUris = { "http://localhost:5003/signin-oidc" },
-                    FrontChannelLogoutUri = "http://localhost:5003/signout-oidc",
-                    PostLogoutRedirectUris = { "http://localhost:5003/signout-callback-oidc" },
+                //     RedirectUris = { "http://localhost:5003/signin-oidc" },
+                //     FrontChannelLogoutUri = "http://localhost:5003/signout-oidc",
+                //     PostLogoutRedirectUris = { "http://localhost:5003/signout-callback-oidc" },
 
-                    AllowOfflineAccess = true,
-                    AllowedScopes = { "openid", "profile", "smoker_api" }
-                },
+                //     AllowOfflineAccess = true,
+                //     AllowedScopes = { "openid", "profile", "smoker_api" }
+                // },
 
                 // SPA client using code flow + pkce
                 new Client
                 {
+                    RequireConsent = false,
                     ClientId = "spa",
-                    ClientName = "SPA Client",
-                    ClientUri = "http://identityserver.io",
-
+                    ClientName = "Smoker SPA",
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true,
                     RequireClientSecret = false,
-
-                    RedirectUris =
-                    {
-                        "http://localhost:5002/index.html",
-                        "http://localhost:5002/callback.html",
-                        "http://localhost:5002/silent.html",
-                        "http://localhost:5002/popup.html",
-                    },
-
-                    PostLogoutRedirectUris = { "http://localhost:5002/index.html" },
-                    AllowedCorsOrigins = { "http://localhost:5002" },
-
-                    AllowedScopes = { "openid", "profile", "smoker_api" }
+                    AllowedScopes = { "openid", "profile", "email", "smoker_api.read", "smoker_api.write" },
+                    RedirectUris = {"https://localhost:4200/home"},
+                    PostLogoutRedirectUris = {"http://localhost:4200/"},
+                    AllowedCorsOrigins = {"http://localhost:4200"},
+                    // AllowAccessTokensViaBrowser = true,
+                    
+                    // AccessTokenLifetime = 3600
                 }
             };
     }

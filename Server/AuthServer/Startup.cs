@@ -17,8 +17,15 @@ using Pomelo.EntityFrameworkCore.MySql.Storage;
 
 namespace AuthServer
 {
+
+
+
     public class Startup
     {
+
+        private readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+
         public IWebHostEnvironment Environment { get; }
         public IConfiguration Configuration { get; }
 
@@ -44,6 +51,15 @@ namespace AuthServer
             {
                 iis.AuthenticationDisplayName = "Windows";
                 iis.AutomaticAuthentication = false;
+            });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("*");
+                                  });
             });
 
             var connectionString = System.Environment.GetEnvironmentVariable("connectionString");
@@ -93,6 +109,9 @@ namespace AuthServer
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
+
+            app.UseCors(MyAllowSpecificOrigins);
+
 
             app.UseStaticFiles();
 
