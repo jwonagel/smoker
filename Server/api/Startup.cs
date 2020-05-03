@@ -26,6 +26,9 @@ namespace api
 {
     public class Startup
     {
+
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -37,16 +40,24 @@ namespace api
         public void ConfigureServices(IServiceCollection services)
         {
             var connectionString = Environment.GetEnvironmentVariable("connectionString");
-            services.AddDbContext<SmokerDBContext>(options => options      
-                .UseMySql(connectionString,      
-                    mysqlOptions =>      
-                        mysqlOptions.ServerVersion(new ServerVersion(new Version(10, 4, 6), ServerType.MariaDb))));  
+            services.AddDbContext<SmokerDBContext>(options => options
+                .UseMySql(connectionString,
+                    mysqlOptions =>
+                        mysqlOptions.ServerVersion(new ServerVersion(new Version(10, 4, 6), ServerType.MariaDb))));
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("*");
+                                  });
+            });
 
-              var mappingConfig = new MapperConfiguration(mc =>
-                {
-                    mc.AddProfile(new AutoMapping());
-                });
+            var mappingConfig = new MapperConfiguration(mc =>
+              {
+                  mc.AddProfile(new AutoMapping());
+              });
 
             IMapper mapper = mappingConfig.CreateMapper();
 
@@ -61,7 +72,7 @@ namespace api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Smoker API", Version = "v1" });
             });
         }
-          
+
 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,7 +81,7 @@ namespace api
             UpdateDatabase(app);
             app.UseSwagger();
 
-            app.UseSwaggerUI(c => 
+            app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Smoker API V1");
                 });
@@ -83,6 +94,8 @@ namespace api
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseAuthorization();
 

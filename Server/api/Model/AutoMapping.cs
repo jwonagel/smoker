@@ -1,3 +1,4 @@
+using api.Model.Client;
 using api.Model.Dababase;
 using api.Model.Smoker;
 using AutoMapper;
@@ -14,6 +15,8 @@ namespace api.Model
             CreateMap<Settings, SettingsSmoker>();
             CreateMap<SettingsSmoker, Settings>();
             
+            CreateMap<Measurement, MeasurementClient>();
+
         }
     }
 

@@ -1,0 +1,23 @@
+<mat-toolbar>
+    <span>Aktuelle Messwerte</span>
+</mat-toolbar>
+<mat-list *ngIf="latestMeasurement">
+    <mat-list-item>
+        <span mat-line>
+      <mat-icon>
+        <fa-icon icon="clock"></fa-icon>
+      </mat-icon>
+      <span class="item">Messzeitpunkt: {{latestMeasurement.timeStampSmoker | date:'HH:mm:ss dd.MM.yyyy'}}</span>
+        </span>
+    </mat-list-item>
+    <app-sensor-item [value]='latestMeasurement.fireSensor' [sensorName]='"Feuerraum"' [icon]='"fire-alt"'>
+    </app-sensor-item>
+    <app-sensor-item [value]='latestMeasurement.contentSensor' [sensorName]='"Innenraum"' [icon]='"bacon"'>
+    </app-sensor-item>
+    <app-sensor-item [value]='latestMeasurement.sensor1' [sensorName]='"Sensor 1"'></app-sensor-item>
+    <app-sensor-item [value]='latestMeasurement.sensor2' [sensorName]='"Sensor 2"'></app-sensor-item>
+    <app-sensor-item [value]='latestMeasurement.sensor3' [sensorName]='"Sensor 3"'></app-sensor-item>
+    <app-sensor-item [value]='latestMeasurement.sensor4' [sensorName]='"Sensor 4"'></app-sensor-item>
+</mat-list>
+
+<mat-divider></mat-divider>

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Model.Client;
 using api.Model.Dababase;
 using api.Model.Smoker;
 using AutoMapper;
@@ -15,6 +16,8 @@ namespace api.Services
 
 
          SettingsSmoker CurrentActiveSettings();
+
+         Task<MeasurementClient> GetLatestMeasurement();
 
     }
 
@@ -50,6 +53,15 @@ namespace api.Services
             var res = _mapper.Map<SettingsSmoker>(currentSetting);
 
             return res;
+        }
+
+        public async Task<MeasurementClient> GetLatestMeasurement()
+        {
+            var measurement = await _context.Measurements
+                .OrderByDescending(m => m.TimeStampeReceived)
+                .FirstOrDefaultAsync();
+
+            return _mapper.Map<MeasurementClient>(measurement);
         }
 
         private Measurement MapToMeasurement(MeasurementSmoker measurement)

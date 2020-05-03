@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using api.Model.Client;
 using api.Model.Smoker;
 using api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +35,14 @@ namespace api.Controllers
             }
             return BadRequest("Error in Measurement");
         }        
+
+
+        [HttpGet]
+        [Route("latest")]
+        public async Task<MeasurementClient> GetLatest()
+        {
+            return await _smokerService.GetLatestMeasurement();
+        }
 
         [HttpGet]
         public IEnumerable<string> Get()
