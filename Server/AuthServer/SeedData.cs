@@ -62,7 +62,8 @@ namespace AuthServer
                         new Claim(JwtClaimTypes.Email, "AliceSmith@email.com"),
                         new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
                         new Claim(JwtClaimTypes.WebSite, "http://alice.com"),
-                        new Claim(JwtClaimTypes.Address, @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }", IdentityServer4.IdentityServerConstants.ClaimValueTypes.Json)
+                        new Claim(JwtClaimTypes.Address, @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }", IdentityServer4.IdentityServerConstants.ClaimValueTypes.Json),
+                        new Claim(JwtClaimTypes.Role, "admin")
                     }).Result;
                         if (!result.Succeeded)
                         {
@@ -96,7 +97,8 @@ namespace AuthServer
                         new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
                         new Claim(JwtClaimTypes.WebSite, "http://bob.com"),
                         new Claim(JwtClaimTypes.Address, @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }", IdentityServer4.IdentityServerConstants.ClaimValueTypes.Json),
-                        new Claim("location", "somewhere")
+                        new Claim("location", "somewhere"),
+                        new Claim(JwtClaimTypes.Role, "user")
                     }).Result;
                         if (!result.Succeeded)
                         {

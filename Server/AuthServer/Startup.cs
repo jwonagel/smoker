@@ -69,6 +69,7 @@ namespace AuthServer
                         mysqlOptions.ServerVersion(new ServerVersion(new Version(10, 4, 6), ServerType.MariaDb))));  
 
             // services.AddDbContext<ApplicationDbContext>(options =>
+            
             //     options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()

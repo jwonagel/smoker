@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
+import { OpenIdConnectService } from '../services/auth/open-id-connect.service';
 
 @Component({
   selector: 'app-main-menu',
@@ -16,6 +17,8 @@ export class MainMenuComponent {
       shareReplay()
     );
 
-  constructor(private breakpointObserver: BreakpointObserver) {}
+  constructor(private breakpointObserver: BreakpointObserver,
+              public openIdConnectService: OpenIdConnectService) {
+              }
 
 }

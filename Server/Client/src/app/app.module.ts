@@ -22,23 +22,10 @@ import { TemperaturPipe } from './pipes/temperatur.pipe';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faThermometerHalf, faFireAlt, faBacon, faClock } from '@fortawesome/free-solid-svg-icons';
 import { SensorItemComponent } from './overview/sensor-item/sensor-item.component';
-import { AuthModule, LogLevel, OidcConfigService } from 'angular-auth-oidc-client';
+import { OpenIdConnectService } from './services/auth/open-id-connect.service';
+import { SigninOidcComponent } from './signin-oidc/signin-oidc.component';
+import { RequireAuthenticateduserRouteGuardService } from './services/require-authenticateduser-route-guard.service';
 
-
-export function configureAuth(oidcConfigService: OidcConfigService) {
-  return () =>
-      oidcConfigService.withConfig({
-          stsServer: environment.stsServer,
-          redirectUrl: 'https://localhost:4200/home',
-          postLogoutRedirectUri: window.location.origin,
-          clientId: 'spa',
-          scope: 'openid profile email smoker_api.read',
-          responseType: 'code',
-          silentRenew: true,
-          silentRenewUrl: `${window.location.origin}/silent-renew.html`,
-          logLevel: LogLevel.Debug,
-      });
-}
 
 
 @NgModule({
@@ -49,7 +36,8 @@ export function configureAuth(oidcConfigService: OidcConfigService) {
     OverviewComponent,
     SettingsComponent,
     TemperaturPipe,
-    SensorItemComponent
+    SensorItemComponent,
+    SigninOidcComponent
   ],
   imports: [
     AppRoutingModule,
@@ -64,18 +52,12 @@ export function configureAuth(oidcConfigService: OidcConfigService) {
     MatListModule,
     ApiModule,
     HttpClientModule,
-    FontAwesomeModule,
-    AuthModule.forRoot(),
+    FontAwesomeModule
   ],
   providers: [
     {provide: BASE_PATH, useValue: environment.API_BASE_PATH},
-     OidcConfigService,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: configureAuth,
-      deps: [OidcConfigService],
-      multi: true,
-    }
+    OpenIdConnectService,
+    RequireAuthenticateduserRouteGuardService
   ],
   bootstrap: [
     AppComponent,
