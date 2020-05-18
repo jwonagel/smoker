@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using api.Model.Client;
 using api.Model.Smoker;
 using api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -13,16 +11,19 @@ namespace api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class SmokerController : ControllerBase
     {
 
         private readonly ISmokerService _smokerService;
+        private readonly IUserInfoService _userInfoService;
         private readonly ILogger<SmokerController> _logger;
 
-        public SmokerController(ILogger<SmokerController> logger, ISmokerService smokerService)
+        public SmokerController(ILogger<SmokerController> logger, ISmokerService smokerService, IUserInfoService userInfoService)
         {
             _logger = logger;
             _smokerService = smokerService;
+            _userInfoService = userInfoService;
         }
 
         [HttpPost]
@@ -39,9 +40,16 @@ namespace api.Controllers
 
         [HttpGet]
         [Route("latest")]
-        public async Task<MeasurementClient> GetLatest()
+        public async Task<IActionResult> GetLatest()
         {
-            return await _smokerService.GetLatestMeasurement();
+            var role = _userInfoService.Role;
+            if (role == string.Empty)
+            {
+                return BadRequest();
+            }
+
+            var latestMeasurents = await _smokerService.GetLatestMeasurement();
+            return Ok(latestMeasurents);
         }
 
         [HttpGet]

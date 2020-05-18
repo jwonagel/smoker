@@ -14,7 +14,7 @@ Python 2.7 and 3.4+
 ## Installation & Usage
 ### pip install
 
-If the python package is hosted on Github, you can install directly from Github
+If the python package is hosted on Github, can install directly from Github
 
 ```sh
 pip install git+https://github.com/GIT_USER_ID/GIT_REPO_ID.git
@@ -51,23 +51,20 @@ import swagger_client
 from swagger_client.rest import ApiException
 from pprint import pprint
 
+# Configure API key authorization: Bearer
+configuration = swagger_client.Configuration()
+configuration.api_key['Authorization'] = 'YOUR_API_KEY'
+# Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+# configuration.api_key_prefix['Authorization'] = 'Bearer'
+
 # create an instance of the API class
-api_instance = swagger_client.SmokerApi(swagger_client.ApiClient(configuration))
+api_instance = swagger_client.SettingsApi(swagger_client.ApiClient(configuration))
 
 try:
-    api_response = api_instance.smoker_get()
+    api_response = api_instance.settings_latest_get()
     pprint(api_response)
 except ApiException as e:
-    print("Exception when calling SmokerApi->smoker_get: %s\n" % e)
-
-# create an instance of the API class
-api_instance = swagger_client.SmokerApi(swagger_client.ApiClient(configuration))
-body = swagger_client.MeasurementSmoker() # MeasurementSmoker |  (optional)
-
-try:
-    api_instance.smoker_post(body=body)
-except ApiException as e:
-    print("Exception when calling SmokerApi->smoker_post: %s\n" % e)
+    print("Exception when calling SettingsApi->settings_latest_get: %s\n" % e)
 ```
 
 ## Documentation for API Endpoints
@@ -76,16 +73,25 @@ All URIs are relative to */*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+*SettingsApi* | [**settings_latest_get**](docs/SettingsApi.md#settings_latest_get) | **GET** /Settings/latest | 
 *SmokerApi* | [**smoker_get**](docs/SmokerApi.md#smoker_get) | **GET** /Smoker | 
+*SmokerApi* | [**smoker_latest_get**](docs/SmokerApi.md#smoker_latest_get) | **GET** /Smoker/latest | 
 *SmokerApi* | [**smoker_post**](docs/SmokerApi.md#smoker_post) | **POST** /Smoker | 
 
 ## Documentation For Models
 
+ - [AlertSmoker](docs/AlertSmoker.md)
  - [MeasurementSmoker](docs/MeasurementSmoker.md)
+ - [SettingsSmoker](docs/SettingsSmoker.md)
 
 ## Documentation For Authorization
 
- All endpoints do not require authorization.
+
+## Bearer
+
+- **Type**: API key
+- **API key parameter name**: Authorization
+- **Location**: HTTP header
 
 
 ## Author

@@ -14,4 +14,6 @@
 from __future__ import absolute_import
 
 # import models into model package
+from swagger_client.models.alert_smoker import AlertSmoker
 from swagger_client.models.measurement_smoker import MeasurementSmoker
+from swagger_client.models.settings_smoker import SettingsSmoker

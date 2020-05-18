@@ -26,9 +26,11 @@ export class OpenIdConnectService {
       authority: environment.stsServer,
       client_id: 'smokerclient',
       redirect_uri: `${window.location.origin}/signin-oidc`,
-      scope: 'openid profile roles',
-      response_type: 'id_token',
-      post_logout_redirect_uri: `${window.location.origin}/`
+      scope: 'openid profile roles smokerapi',
+      response_type: 'id_token token',
+      post_logout_redirect_uri: `${window.location.origin}/`,
+      automaticSilentRenew: true,
+      silent_redirect_uri: `${window.location.origin}/redirect-silentrenew`
     });
     this.userManager.clearStaleState();
 
@@ -63,6 +65,15 @@ export class OpenIdConnectService {
     this.userManager.signinRedirectCallback().then(u => {
       if (!environment.production){
         console.log('Callback after logon', u);
+      }
+    });
+  }
+
+  handleSilentCallback() {
+    this.userManager.signinSilentCallback().then((user) => {
+      this.currentUser = user;
+      if (!environment.production){
+        console.log('Callback after silent signin handled', user);
       }
     });
   }

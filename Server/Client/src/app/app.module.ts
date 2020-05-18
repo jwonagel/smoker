@@ -16,7 +16,7 @@ import { MatListModule } from '@angular/material/list';
 import { OverviewComponent } from './overview/overview.component';
 import { SettingsComponent } from './settings/settings.component';
 import { ApiModule, BASE_PATH } from './services/api';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { TemperaturPipe } from './pipes/temperatur.pipe';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
@@ -25,6 +25,8 @@ import { SensorItemComponent } from './overview/sensor-item/sensor-item.componen
 import { OpenIdConnectService } from './services/auth/open-id-connect.service';
 import { SigninOidcComponent } from './signin-oidc/signin-oidc.component';
 import { RequireAuthenticateduserRouteGuardService } from './services/require-authenticateduser-route-guard.service';
+import { AddAuthorizationHeaderInterceptor } from './services/add-authorization-header-interceptor';
+import { RedirectSilentRenewComponent } from './redirect-silent-renew/redirect-silent-renew.component';
 
 
 
@@ -37,7 +39,8 @@ import { RequireAuthenticateduserRouteGuardService } from './services/require-au
     SettingsComponent,
     TemperaturPipe,
     SensorItemComponent,
-    SigninOidcComponent
+    SigninOidcComponent,
+    RedirectSilentRenewComponent
   ],
   imports: [
     AppRoutingModule,
@@ -56,6 +59,11 @@ import { RequireAuthenticateduserRouteGuardService } from './services/require-au
   ],
   providers: [
     {provide: BASE_PATH, useValue: environment.API_BASE_PATH},
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AddAuthorizationHeaderInterceptor,
+      multi: true
+    },
     OpenIdConnectService,
     RequireAuthenticateduserRouteGuardService
   ],

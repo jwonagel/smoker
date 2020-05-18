@@ -4,6 +4,7 @@ import { OverviewComponent } from './overview/overview.component';
 import { SettingsComponent } from './settings/settings.component';
 import { SigninOidcComponent } from './signin-oidc/signin-oidc.component';
 import { RequireAuthenticateduserRouteGuardService } from './services/require-authenticateduser-route-guard.service';
+import { RedirectSilentRenewComponent } from './redirect-silent-renew/redirect-silent-renew.component';
 
 
 const routes: Routes = [
@@ -13,7 +14,8 @@ const routes: Routes = [
    canActivate: [RequireAuthenticateduserRouteGuardService]},
   {path: '', redirectTo: '/home', pathMatch: 'full',
     canActivate: [RequireAuthenticateduserRouteGuardService]},
-  {path: 'signin-oidc', component: SigninOidcComponent}
+  {path: 'signin-oidc', component: SigninOidcComponent},
+  {path: 'redirect-silent-renew', component: RedirectSilentRenewComponent }
 ];
 
 @NgModule({

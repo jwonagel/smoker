@@ -20,7 +20,8 @@
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
                 "connectionString": "Server=localhost; Database=AuthServer;User=root;Password=O71gycN1lDOMr5WG;",
-                "ASPNETCORE_URLS":"https://*:5123"
+                "ASPNETCORE_URLS":"https://*:5123",
+                "ClientUrl": "https://localhost:4200"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"

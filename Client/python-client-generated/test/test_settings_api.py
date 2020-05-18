@@ -15,33 +15,21 @@ from __future__ import absolute_import
 import unittest
 
 import swagger_client
-from api.smoker_api import SmokerApi  # noqa: E501
+from api.settings_api import SettingsApi  # noqa: E501
 from swagger_client.rest import ApiException
 
 
-class TestSmokerApi(unittest.TestCase):
-    """SmokerApi unit test stubs"""
+class TestSettingsApi(unittest.TestCase):
+    """SettingsApi unit test stubs"""
 
     def setUp(self):
-        self.api = api.smoker_api.SmokerApi()  # noqa: E501
+        self.api = api.settings_api.SettingsApi()  # noqa: E501
 
     def tearDown(self):
         pass
 
-    def test_smoker_get(self):
-        """Test case for smoker_get
-
-        """
-        pass
-
-    def test_smoker_latest_get(self):
-        """Test case for smoker_latest_get
-
-        """
-        pass
-
-    def test_smoker_post(self):
-        """Test case for smoker_post
+    def test_settings_latest_get(self):
+        """Test case for settings_latest_get
 
         """
         pass

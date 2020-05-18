@@ -18,6 +18,8 @@ using api.Model.Dababase;
 using api.Services;
 using AutoMapper;
 using api.Model;
+using IdentityServer4.AccessTokenValidation;
+using Microsoft.AspNetCore.Http;
 
 
 // dotnet new is4aspid --force -n foo
@@ -50,7 +52,9 @@ namespace api
                 options.AddPolicy(name: MyAllowSpecificOrigins,
                                   builder =>
                                   {
-                                      builder.WithOrigins("*");
+                                      builder.WithOrigins("*")
+                                      .AllowAnyHeader()
+                                      .AllowAnyMethod();
                                   });
             });
 
@@ -63,14 +67,55 @@ namespace api
 
 
             services.AddSingleton(mapper);
+            // register an IHttpContextAccessor so we can access the current
+            // HttpContext in services by injecting it
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<ISmokerService, SmokerService>();
+            services.AddScoped<IUserInfoService, UserInfoService>();
             services.AddControllers();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Smoker API", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
+                      Enter 'Bearer' [space] and then your token in the text input below.
+                      \n\nExample: 'Bearer 12345abcdef'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                          new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference 
+                                { 
+                                    Type = ReferenceType.SecurityScheme, 
+                                    Id = "Bearer" 
+                                },
+                                Scheme = "oauth2",
+                                Name = "Bearer",
+                                In = ParameterLocation.Header
+                            },
+                            new string[] {}
+
+                    }
+                });
             });
+
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = Environment.GetEnvironmentVariable("Authority");
+                    options.ApiName = "smokerapi";
+                });
         }
 
 
@@ -91,12 +136,11 @@ namespace api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
             app.UseCors(MyAllowSpecificOrigins);
 
+
+            app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

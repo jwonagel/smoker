@@ -2,8 +2,7 @@ import libs.I2C_LCD_driver as lcd_driver
 import libs.Temperatur as Temperatur
 from libs.smoker_gpio import smoker_gpio
 from time import sleep
-import swagger_client
-from swagger_client.rest import ApiException
+import api 
 import datetime
 from menu import Main_menu
 import settings as sett
@@ -50,22 +49,9 @@ settings = sett.read_settings()
 main_menu = Main_menu(mylcd.lcd_display_string_thread_save, mylcd.lcd_clear, gpio, settings)
 temp_menu = main_menu.get_temp_menu()
 
-configuration = swagger_client.Configuration()
-configuration.host = '192.168.140.228:9080'
-api_instance = swagger_client.SmokerApi(swagger_client.ApiClient(configuration))
 
-def send_temp(temp):
-    body = swagger_client.MeasurementSmoker()
-    body.sensor2 = temp
-    body.time_stamp = datetime.datetime.now().isoformat()
+api_instance = api.api()
 
-    try:
-        api_response = api_instance.smoker_post(body=body)
-        print(api_response)
-    except ApiException as e:
-        print('Exception while SmokerApi -> smokder_post: $s\n' % e)
-    except Exception as e:
-        print(e)
 
 
 
@@ -77,5 +63,5 @@ while True:
 
     cnt += 1
     if cnt % 20 == 0:
-        send_temp(temp2[2])
+        api_instance.post_measurement(temp2[2])
     

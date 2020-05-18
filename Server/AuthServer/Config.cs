@@ -4,13 +4,14 @@
 
 using IdentityServer4;
 using IdentityServer4.Models;
+using System;
 using System.Collections.Generic;
 
 namespace AuthServer
 {
     public static class Config
     {
-        public static IEnumerable<IdentityResource> Ids =>
+        public static IEnumerable<IdentityResource> GetIdentityResources =>
             new IdentityResource[]
             {
                 new IdentityResources.OpenId(),
@@ -23,12 +24,14 @@ namespace AuthServer
         public static IEnumerable<ApiResource> Apis =>
             new ApiResource[]
             {
-                new ApiResource("smokerapi", "Smmoker API", new [] {"role"})
+                new ApiResource("smokerapi", "Smmoker API", new [] {"role", "given_name", "family_name"})
             };
 
 
-        public static IEnumerable<Client> Clients =>
-            new Client[]
+        public static IEnumerable<Client> GetClients()
+        {
+            var clientUri = Environment.GetEnvironmentVariable("ClientUrl");
+            return new Client[]
             {
                 // SPA client using code flow + pkce
                 new Client
@@ -39,11 +42,12 @@ namespace AuthServer
                     RequireConsent = false,
                     AllowAccessTokensViaBrowser = true,
                     RedirectUris = new List<string> {
-                        "https://localhost:4200/signin-oidc"
+                        $"{clientUri}/signin-oidc",
+                        $"{clientUri}/redirect-silent-renew"
                     },
                     AccessTokenLifetime = 180,
                     PostLogoutRedirectUris = new List<string> {
-                        "https://localhost:4200/"
+                        $"{clientUri}/"
                     },
                     AllowedScopes = new [] {
                         IdentityServerConstants.StandardScopes.OpenId,
@@ -51,7 +55,21 @@ namespace AuthServer
                         "roles",
                         "smokerapi"
                     }
+                },
+                new Client()
+                {
+                    ClientName = "Smoker",
+                    ClientId = "smoker",
+                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    ClientSecrets = 
+                    {
+                        new Secret("secret".Sha256())
+                    },
+                    AllowedScopes = {
+                        "smokerapi"
+                    }                   
                 }
             };
+        }
     }
 }

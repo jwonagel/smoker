@@ -19,7 +19,8 @@
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "connectionString": "Server=localhost; Database=smoker;User=root;Password=O71gycN1lDOMr5WG;"
+                "connectionString": "Server=localhost; Database=smoker;User=root;Password=O71gycN1lDOMr5WG;",
+                "Authority": "https://localhost:5123"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
