@@ -20,6 +20,8 @@ using AutoMapper;
 using api.Model;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Http;
+using api.Hubs;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 
 // dotnet new is4aspid --force -n foo
@@ -47,17 +49,31 @@ namespace api
                     mysqlOptions =>
                         mysqlOptions.ServerVersion(new ServerVersion(new Version(10, 4, 6), ServerType.MariaDb))));
 
+            // services.AddCors(options =>
+            // {
+            //     options.AddPolicy(name: MyAllowSpecificOrigins,
+            //                       builder =>
+            //                       {
+            //                           builder.WithOrigins("*")
+            //                           .AllowAnyHeader()
+            //                           .AllowAnyMethod();
+            //                       });
+            // });
+
             services.AddCors(options =>
             {
-                options.AddPolicy(name: MyAllowSpecificOrigins,
-                                  builder =>
-                                  {
-                                      builder.WithOrigins("*")
-                                      .AllowAnyHeader()
-                                      .AllowAnyMethod();
-                                  });
+            options.AddPolicy(name: MyAllowSpecificOrigins,
+                builder =>
+                {
+                    builder.WithOrigins("https://localhost:4200")
+                           .AllowAnyHeader()
+                           .AllowAnyMethod()
+                           .SetIsOriginAllowed((x) => true)
+                           .AllowCredentials();
+                });
             });
 
+            
             var mappingConfig = new MapperConfiguration(mc =>
               {
                   mc.AddProfile(new AutoMapping());
@@ -115,7 +131,24 @@ namespace api
                 {
                     options.Authority = Environment.GetEnvironmentVariable("Authority");
                     options.ApiName = "smokerapi";
+                    options.Events = new JwtBearerEvents{
+                        OnMessageReceived = context => 
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+                            // If the request is for our hub...
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) &&
+                                (path.StartsWithSegments("/messagehubB")))
+                            {
+                                // Read the token out of the query string
+                                context.Token = accessToken;
+                            }
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
+
+            services.AddSignalR();
         }
 
 
@@ -123,6 +156,8 @@ namespace api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors(MyAllowSpecificOrigins);
+
             UpdateDatabase(app);
             app.UseSwagger();
 
@@ -136,15 +171,15 @@ namespace api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors(MyAllowSpecificOrigins);
-
-
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
 
+            
+
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<MessageHub>("/messagehub");
                 endpoints.MapControllers();
             });
         }
@@ -158,6 +193,24 @@ namespace api
             using var context = serviceScope.ServiceProvider.GetService<SmokerDBContext>();
 
             context.Database.Migrate();
+
+            if(!context.Settings.Any())
+            {
+                var settings = new Settings
+                {
+                    FireNotifcationTemperatur = 80,
+                    IsAutoMode = true,
+                    LastSettingsActivation = DateTime.Now,
+                    LastSettingsUpdateUser = "System",
+                    OpenCloseTreshold = 120,
+                    TemperaturUpdateCycleSeconds = 120,
+                    LastSettingsUpdate = DateTime.Now,
+                    SettingsId = Guid.NewGuid(),
+                    Alerts = new List<Alert>() 
+                };
+                context.Settings.Add(settings);
+                context.SaveChanges();
+            }
         }
     }
 }

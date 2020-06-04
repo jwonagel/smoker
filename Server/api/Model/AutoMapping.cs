@@ -14,8 +14,11 @@ namespace api.Model
 
             CreateMap<Settings, SettingsSmoker>();
             CreateMap<SettingsSmoker, Settings>();
-            
+            CreateMap<Settings, SettingsClient>();
+            CreateMap<SettingsClient, Settings>();
+
             CreateMap<Measurement, MeasurementClient>();
+
 
         }
     }

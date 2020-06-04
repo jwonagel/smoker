@@ -1,10 +1,12 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Hubs;
 using api.Model.Client;
 using api.Model.Dababase;
 using api.Model.Smoker;
 using AutoMapper;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Services
@@ -12,13 +14,11 @@ namespace api.Services
 
     public interface ISmokerService
     {
-         Task<bool> AddMessurement(MeasurementSmoker measurement);
-
-
-         SettingsSmoker CurrentActiveSettings();
-
-         Task<MeasurementClient> GetLatestMeasurement();
-
+        Task<bool> AddMessurement(MeasurementSmoker measurement);
+        SettingsSmoker CurrentActiveSettings();
+        Task<MeasurementClient> GetLatestMeasurement();
+        Task<SettingsClient> UpdateSettings(SettingsClient settings);
+        Task<SettingsClient> GetCurrentClientSettings();
     }
 
     public class SmokerService : ISmokerService
@@ -26,11 +26,15 @@ namespace api.Services
 
         private readonly SmokerDBContext _context;
         private readonly IMapper _mapper;
+        private readonly IHubContext<MessageHub, IMessageHub> _messageHub;
+        private IUserInfoService _userInfoService;
 
-        public SmokerService(SmokerDBContext context, IMapper mapper)
+        public SmokerService(SmokerDBContext context, IMapper mapper, IHubContext<MessageHub, IMessageHub> messageHub, IUserInfoService userInfoService)
         {
             _context = context;
             _mapper = mapper;
+            _messageHub = messageHub;
+            _userInfoService = userInfoService;
         }
 
         public async Task<bool> AddMessurement(MeasurementSmoker measurement)
@@ -43,6 +47,21 @@ namespace api.Services
             return await _context.SaveChangesAsync() == 1;            
         }
 
+        public async Task<SettingsClient> UpdateSettings(SettingsClient settings)
+        {
+            var settingsDatabase = await _context.Settings.FirstAsync();
+            _mapper.Map(settings, settingsDatabase);
+            
+            settings.LastSettingsUpdate = DateTime.Now;
+            settings.LastSettingsUpdateUser = _userInfoService.FirstName + " " + _userInfoService.LastName;
+
+            var t = _messageHub.Clients.All.ReceiveMessage("Settings", "Update");
+            await _context.SaveChangesAsync();
+            await t;            
+
+            return _mapper.Map<SettingsClient>(settingsDatabase);
+        }
+
         public SettingsSmoker CurrentActiveSettings()
         {
             var currentSetting = _context.Settings
@@ -53,6 +72,13 @@ namespace api.Services
             var res = _mapper.Map<SettingsSmoker>(currentSetting);
 
             return res;
+        }
+
+
+        public async Task<SettingsClient> GetCurrentClientSettings()
+        {
+            var settings = await _context.Settings.FirstAsync();
+            return _mapper.Map<SettingsClient>(settings);
         }
 
         public async Task<MeasurementClient> GetLatestMeasurement()
@@ -78,5 +104,6 @@ namespace api.Services
                 TimeStampSmoker = measurement.TimeStamp,
             };
         }
+
     }
 }

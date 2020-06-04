@@ -1,24 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
+using api.Hubs;
+using api.Model.Client;
 using api.Model.Smoker;
 using api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 
 namespace api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class SettingsController : ControllerBase
+    [Route("/Smoker/Settings")]
+    [Authorize]
+    public class SmokerSettingsController : ControllerBase
     {
 
         private readonly ISmokerService _smokerService;
         private readonly ILogger<SmokerController> _logger;
 
-        public SettingsController(ILogger<SmokerController> logger, ISmokerService smokerService)
+        public SmokerSettingsController(ILogger<SmokerController> logger, ISmokerService smokerService)
         {
             _logger = logger;
             _smokerService = smokerService;
@@ -26,10 +30,9 @@ namespace api.Controllers
 
         [HttpGet]
         [Route("latest")]
-        public SettingsSmoker GetCurrentSetting() 
+        public SettingsSmoker GetCurrentSettingSmoker() 
         {
             return _smokerService.CurrentActiveSettings();
         }        
-
     }
 }

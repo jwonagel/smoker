@@ -1,0 +1,78 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "API",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build_api",
+            "program": "${workspaceFolder}/api/bin/Debug/netcoreapp3.1/api.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/api",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "connectionString": "Server=localhost; Database=smoker;User=root;Password=O71gycN1lDOMr5WG;",
+                "Authority": "https://localhost:5123"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
+        },
+        {
+            "name": "AttachApi",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        },
+        {
+            "name": "AuthServer",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build_auth",
+            "program": "${workspaceFolder}/AuthServer/bin/Debug/netcoreapp3.1/AuthServer.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/AuthServer",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "connectionString": "Server=localhost; Database=AuthServer;User=root;Password=O71gycN1lDOMr5WG;",
+                "ASPNETCORE_URLS":"https://*:5123",
+                "ClientUrl": "https://localhost:4200"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/AuthServer/Views"
+            }
+        },
+        {
+            "name": "AttachAuth",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Angular",
+            "url": "https://localhost:4200/home",
+            "webRoot": "${workspaceFolder}"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "All",
+            "configurations": ["API", "AuthServer", "Angular", "AttachApi", "AttachAuth"]
+        }
+    ]
+}

@@ -21,3 +21,51 @@
 </mat-list>
 
 <mat-divider></mat-divider>
+
+<mat-toolbar>
+    <span>Test Messages</span>
+</mat-toolbar>
+
+<!-- <form class="test-form">
+    <mat-form-field class="example-full-with">
+        <mat-label>Input</mat-label>
+        <input matInput [value]="txtMessage">
+    </mat-form-field>
+
+    <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="sendMessage()">
+      Senden
+   </button>
+</form>
+
+<div class="example-container">
+    <mat-form-field appearance="fill">
+        <mat-label>Input</mat-label>
+        <input matInput>
+    </mat-form-field>
+    <br>
+    <mat-form-field appearance="fill">
+        <mat-label>Select</mat-label>
+        <mat-select>
+            <mat-option value="option">Option</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <br>
+    <mat-form-field appearance="fill">
+        <mat-label>Textarea</mat-label>
+        <textarea matInput></textarea>
+    </mat-form-field>
+</div> -->
+
+
+<mat-form-field class="example-full-width">
+    <mat-label>Message</mat-label>
+    <input #message matInput placeholder="A Message">
+</mat-form-field>
+
+<button mat-button color="primary" (click)="sendMessage(message.value)">Senden</button>
+
+<div>
+    <p *ngFor="let msg of messages">
+        {{msg}}
+    </p>
+</div>

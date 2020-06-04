@@ -8,6 +8,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSliderModule } from '@angular/material/slider';
 import { MainMenuComponent } from './main-menu/main-menu.component';
 import { LayoutModule } from '@angular/cdk/layout';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -27,6 +29,7 @@ import { SigninOidcComponent } from './signin-oidc/signin-oidc.component';
 import { RequireAuthenticateduserRouteGuardService } from './services/require-authenticateduser-route-guard.service';
 import { AddAuthorizationHeaderInterceptor } from './services/add-authorization-header-interceptor';
 import { RedirectSilentRenewComponent } from './redirect-silent-renew/redirect-silent-renew.component';
+import { from } from 'rxjs';
 
 
 
@@ -53,6 +56,8 @@ import { RedirectSilentRenewComponent } from './redirect-silent-renew/redirect-s
     MatSidenavModule,
     MatIconModule,
     MatListModule,
+    MatFormFieldModule,
+    MatInputModule,
     ApiModule,
     HttpClientModule,
     FontAwesomeModule
