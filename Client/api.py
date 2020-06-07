@@ -74,17 +74,12 @@ class api:
         return tokens['token_type'], tokens['access_token'], tokens['expires_in']
 
 
-def login_function():
-    api_token = api_instance.get_or_update_access_token()
-    return api_token
-
-
-def test_signal_r():
-    url = api_host + '/messagehub'
-    hub_connection = HubConnectionBuilder() \
+    def connect_signal_r(self, message_received_func, open_close_update_func):
+        url = api_host + '/messagehub'
+        hub_connection = HubConnectionBuilder() \
         .with_url(url, options={
             "verify_ssl": verify_ssl,
-            "access_token_factory": api_instance.get_or_update_access_token
+            "access_token_factory": self.get_or_update_access_token
         }) \
         .with_automatic_reconnect({
             "type": "raw",
@@ -94,24 +89,64 @@ def test_signal_r():
         }) \
         .build()
 
-    hub_connection.on('ReceiveMessage', print)
-    hub_connection.start()
-    message = None
+        hub_connection.on('ReceiveMessage', message_received_func)
+        hub_connection.on('ReceiveUpdateOpenCloseState', open_close_update_func)
+        hub_connection.start();
+        
 
-    for i in range(100):
-        time.sleep(1)
+def login_function():
+    api_token = api_instance.get_or_update_access_token()
+    return api_token
+
+
+# def test_signal_r():
+#     url = api_host + '/messagehub'
+#     hub_connection = HubConnectionBuilder() \
+#         .with_url(url, options={
+#             "verify_ssl": verify_ssl,
+#             "access_token_factory": self.get_or_update_access_token
+#         }) \
+#         .with_automatic_reconnect({
+#             "type": "raw",
+#             "keep_alive_interval": 10,
+#             "reconnect_interval": 15,
+#             "max_attempts": 15
+#         }) \
+#         .build()
+
+#     hub_connection.on('ReceiveMessage', print)
+#     hub_connection.start()
+#     message = None
+
+#     for i in range(100):
+#         time.sleep(1)
 
 
 api_instance = None
 
+def message_received(args):
+    print('MEssage received')
+    print(args[0])
+    print(args[1])
+
+def open_close_update(value):
+    print('Open Close Update')
+    print(value)
+
 if __name__ == '__main__':
     print(os.environ)
     api_instance = api()
+    api_instance.connect_signal_r(message_received, open_close_update)
+
+    for i in range(30):
+        print(i)
+        time.sleep(10)
+
     # measurement = swagger_client.MeasurementSmoker()
     # measurement.sensor1 = 1
     # measurement.sensor2 = 3
-    api_instance.get_smoker()
-    test_signal_r()
+    # api_instance.get_smoker()
+    # test_signal_r()
 
     # time.sleep(10)
     # api_instance.get_smoker()

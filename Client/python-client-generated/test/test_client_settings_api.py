@@ -15,21 +15,27 @@ from __future__ import absolute_import
 import unittest
 
 import swagger_client
-from api.settings_api import SettingsApi  # noqa: E501
+from api.client_settings_api import ClientSettingsApi  # noqa: E501
 from swagger_client.rest import ApiException
 
 
-class TestSettingsApi(unittest.TestCase):
-    """SettingsApi unit test stubs"""
+class TestClientSettingsApi(unittest.TestCase):
+    """ClientSettingsApi unit test stubs"""
 
     def setUp(self):
-        self.api = api.settings_api.SettingsApi()  # noqa: E501
+        self.api = api.client_settings_api.ClientSettingsApi()  # noqa: E501
 
     def tearDown(self):
         pass
 
-    def test_settings_latest_get(self):
-        """Test case for settings_latest_get
+    def test_client_settings_current_get(self):
+        """Test case for client_settings_current_get
+
+        """
+        pass
+
+    def test_client_settings_current_post(self):
+        """Test case for client_settings_current_post
 
         """
         pass

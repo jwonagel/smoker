@@ -3,16 +3,18 @@ import { Configuration } from './configuration';
 import { HttpClient } from '@angular/common/http';
 
 
-import { SettingsService } from './api/settings.service';
+import { ClientSettingsService } from './api/clientSettings.service';
 import { SmokerService } from './api/smoker.service';
+import { SmokerSettingsService } from './api/smokerSettings.service';
 
 @NgModule({
   imports:      [],
   declarations: [],
   exports:      [],
   providers: [
-    SettingsService,
-    SmokerService ]
+    ClientSettingsService,
+    SmokerService,
+    SmokerSettingsService ]
 })
 export class ApiModule {
     public static forRoot(configurationFactory: () => Configuration): ModuleWithProviders {

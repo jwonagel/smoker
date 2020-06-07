@@ -19,5 +19,9 @@ namespace api.Model.Smoker
         public double Sensor4 { get; set; }
 
         public DateTime TimeStamp { get; set; }
+
+        public double OpenCloseState { get; set; }
+
+        public bool IsAutoMode { get; set; }
     }
 }

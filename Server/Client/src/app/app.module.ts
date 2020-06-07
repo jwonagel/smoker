@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { FooterComponent } from './footer/footer.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSliderModule } from '@angular/material/slider';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { MainMenuComponent } from './main-menu/main-menu.component';
 import { LayoutModule } from '@angular/cdk/layout';
 import { MatInputModule } from '@angular/material/input';
@@ -30,7 +31,10 @@ import { RequireAuthenticateduserRouteGuardService } from './services/require-au
 import { AddAuthorizationHeaderInterceptor } from './services/add-authorization-header-interceptor';
 import { RedirectSilentRenewComponent } from './redirect-silent-renew/redirect-silent-renew.component';
 import { from } from 'rxjs';
-
+import {  FormsModule } from '@angular/forms';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatCardModule } from '@angular/material/card';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 
 @NgModule({
@@ -50,6 +54,7 @@ import { from } from 'rxjs';
     BrowserModule,
     BrowserAnimationsModule,
     MatSliderModule,
+    MatSlideToggleModule,
     LayoutModule,
     MatToolbarModule,
     MatButtonModule,
@@ -60,7 +65,11 @@ import { from } from 'rxjs';
     MatInputModule,
     ApiModule,
     HttpClientModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    FormsModule,
+    MatGridListModule,
+    MatCardModule,
+    MatSnackBarModule
   ],
   providers: [
     {provide: BASE_PATH, useValue: environment.API_BASE_PATH},

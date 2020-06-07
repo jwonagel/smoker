@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Model.Dababase;
 
 namespace api.Migrations
 {
     [DbContext(typeof(SmokerDBContext))]
-    partial class SmokerDBContextModelSnapshot : ModelSnapshot
+    [Migration("20200607123712_OpenCloseStateToMeasurement")]
+    partial class OpenCloseStateToMeasurement
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,10 +63,6 @@ namespace api.Migrations
                     b.Property<double>("FireSensor")
                         .HasColumnName("FIRE_SENSOR")
                         .HasColumnType("double");
-
-                    b.Property<bool>("IsAutoMode")
-                        .HasColumnName("IS_AUTO_MODE")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<double>("OpenCloseState")
                         .HasColumnName("OPEN_CLOSE_STATE")

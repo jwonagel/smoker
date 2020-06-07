@@ -11,6 +11,8 @@ Name | Type | Description | Notes
 **sensor3** | **float** |  | [optional] 
 **sensor4** | **float** |  | [optional] 
 **time_stamp** | **datetime** |  | [optional] 
+**open_close_state** | **float** |  | [optional] 
+**is_auto_mode** | **bool** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

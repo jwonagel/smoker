@@ -1,3 +1,4 @@
+using api.Model.Hub;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System.Linq;
@@ -10,18 +11,25 @@ namespace api.Hubs
     {
         Task ReceiveMessage(string type, string message);
 
+        Task ReceiveUpdateOpenCloseState(OpenCloseModel model);
+
     }
 
     [Authorize]
     public class MessageHub : Hub<IMessageHub>
     {
+        public const string UserGroupName = "user";
         private static readonly string _smokerGroupName = "smoker";
-        private static readonly string _userGroupName = "user";
 
         public async Task SendMessage(string type, string message)
         {
             await Clients.All.ReceiveMessage(type, message);
 
+        }
+
+        public async Task SendUpdateCloseState(OpenCloseModel model)
+        {
+            await Clients.Group(_smokerGroupName).ReceiveUpdateOpenCloseState(model);
         }
 
         public override async Task OnDisconnectedAsync(System.Exception exception)
@@ -42,7 +50,7 @@ namespace api.Hubs
         {
             var claims = Context.User.Claims;
             var claim = claims.FirstOrDefault(c => c.Type == "client_id");
-            return claim.Value == _smokerGroupName ? claim.Value : _userGroupName;
+            return claim.Value == _smokerGroupName ? claim.Value : UserGroupName;
         }
 
     }

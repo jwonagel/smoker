@@ -15,12 +15,15 @@
 from __future__ import absolute_import
 
 # import apis into sdk package
-from swagger_client.api.settings_api import SettingsApi
+from swagger_client.api.client_settings_api import ClientSettingsApi
 from swagger_client.api.smoker_api import SmokerApi
+from swagger_client.api.smoker_settings_api import SmokerSettingsApi
 # import ApiClient
 from swagger_client.api_client import ApiClient
 from swagger_client.configuration import Configuration
 # import models into sdk package
+from swagger_client.models.alert_client import AlertClient
 from swagger_client.models.alert_smoker import AlertSmoker
 from swagger_client.models.measurement_smoker import MeasurementSmoker
+from swagger_client.models.settings_client import SettingsClient
 from swagger_client.models.settings_smoker import SettingsSmoker

@@ -1,13 +1,13 @@
-# swagger_client.SettingsApi
+# swagger_client.SmokerSettingsApi
 
 All URIs are relative to */*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**settings_latest_get**](SettingsApi.md#settings_latest_get) | **GET** /Settings/latest | 
+[**smoker_settings_latest_get**](SmokerSettingsApi.md#smoker_settings_latest_get) | **GET** /Smoker/Settings/latest | 
 
-# **settings_latest_get**
-> SettingsSmoker settings_latest_get()
+# **smoker_settings_latest_get**
+> SettingsSmoker smoker_settings_latest_get()
 
 
 
@@ -26,13 +26,13 @@ configuration.api_key['Authorization'] = 'YOUR_API_KEY'
 # configuration.api_key_prefix['Authorization'] = 'Bearer'
 
 # create an instance of the API class
-api_instance = swagger_client.SettingsApi(swagger_client.ApiClient(configuration))
+api_instance = swagger_client.SmokerSettingsApi(swagger_client.ApiClient(configuration))
 
 try:
-    api_response = api_instance.settings_latest_get()
+    api_response = api_instance.smoker_settings_latest_get()
     pprint(api_response)
 except ApiException as e:
-    print("Exception when calling SettingsApi->settings_latest_get: %s\n" % e)
+    print("Exception when calling SmokerSettingsApi->smoker_settings_latest_get: %s\n" % e)
 ```
 
 ### Parameters

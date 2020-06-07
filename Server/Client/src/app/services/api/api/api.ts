@@ -1,5 +1,7 @@
-export * from './settings.service';
-import { SettingsService } from './settings.service';
+export * from './clientSettings.service';
+import { ClientSettingsService } from './clientSettings.service';
 export * from './smoker.service';
 import { SmokerService } from './smoker.service';
-export const APIS = [SettingsService, SmokerService];
+export * from './smokerSettings.service';
+import { SmokerSettingsService } from './smokerSettings.service';
+export const APIS = [ClientSettingsService, SmokerService, SmokerSettingsService];

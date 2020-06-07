@@ -7,7 +7,7 @@
       <mat-icon>
         <fa-icon icon="clock"></fa-icon>
       </mat-icon>
-      <span class="item">Messzeitpunkt: {{latestMeasurement.timeStampSmoker | date:'HH:mm:ss dd.MM.yyyy'}}</span>
+      <span class="item">Messzeitpunkt: {{latestMeasurement.timeStamp | date:'HH:mm:ss dd.MM.yyyy'}}</span>
         </span>
     </mat-list-item>
     <app-sensor-item [value]='latestMeasurement.fireSensor' [sensorName]='"Feuerraum"' [icon]='"fire-alt"'>
@@ -21,51 +21,16 @@
 </mat-list>
 
 <mat-divider></mat-divider>
-
 <mat-toolbar>
-    <span>Test Messages</span>
+    <span>Status</span>
 </mat-toolbar>
-
-<!-- <form class="test-form">
-    <mat-form-field class="example-full-with">
-        <mat-label>Input</mat-label>
-        <input matInput [value]="txtMessage">
-    </mat-form-field>
-
-    <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="sendMessage()">
-      Senden
-   </button>
+<form>
+    <div>
+        <mat-slide-toggle name="AutoMode" (change)="onAutoModeToggleChange($event)" [(ngModel)]="autoMode">Auto Mode</mat-slide-toggle>
+    </div>
+    <div>
+        <mat-slider [disabled]="autoMode" (change)="onOpenCloseChangeEvent($event)" class="input " name="OpenClose " thumbLabel min="0 " max="100 " step="1 " type="number " [(ngModel)]="openClose">
+        </mat-slider>
+        <span class="value">{{openClose}}</span>
+    </div>
 </form>
-
-<div class="example-container">
-    <mat-form-field appearance="fill">
-        <mat-label>Input</mat-label>
-        <input matInput>
-    </mat-form-field>
-    <br>
-    <mat-form-field appearance="fill">
-        <mat-label>Select</mat-label>
-        <mat-select>
-            <mat-option value="option">Option</mat-option>
-        </mat-select>
-    </mat-form-field>
-    <br>
-    <mat-form-field appearance="fill">
-        <mat-label>Textarea</mat-label>
-        <textarea matInput></textarea>
-    </mat-form-field>
-</div> -->
-
-
-<mat-form-field class="example-full-width">
-    <mat-label>Message</mat-label>
-    <input #message matInput placeholder="A Message">
-</mat-form-field>
-
-<button mat-button color="primary" (click)="sendMessage(message.value)">Senden</button>
-
-<div>
-    <p *ngFor="let msg of messages">
-        {{msg}}
-    </p>
-</div>

@@ -44,7 +44,11 @@ namespace api.Services
             dbMeasurement.TimeStampeReceived = DateTime.Now;
 
             _context.Measurements.Add(dbMeasurement);
-            return await _context.SaveChangesAsync() == 1;            
+            
+            var saved = await _context.SaveChangesAsync() == 1;
+            await _messageHub.Clients.Group(MessageHub.UserGroupName).ReceiveMessage("Measurement", "Update");
+
+            return saved;            
         }
 
         public async Task<SettingsClient> UpdateSettings(SettingsClient settings)
@@ -52,12 +56,11 @@ namespace api.Services
             var settingsDatabase = await _context.Settings.FirstAsync();
             _mapper.Map(settings, settingsDatabase);
             
-            settings.LastSettingsUpdate = DateTime.Now;
-            settings.LastSettingsUpdateUser = _userInfoService.FirstName + " " + _userInfoService.LastName;
+            settingsDatabase.LastSettingsUpdate = DateTime.Now;
+            settingsDatabase.LastSettingsUpdateUser = _userInfoService.FirstName + " " + _userInfoService.LastName;
 
-            var t = _messageHub.Clients.All.ReceiveMessage("Settings", "Update");
             await _context.SaveChangesAsync();
-            await t;            
+            await _messageHub.Clients.All.ReceiveMessage("Settings", "Update").ConfigureAwait(false);      
 
             return _mapper.Map<SettingsClient>(settingsDatabase);
         }

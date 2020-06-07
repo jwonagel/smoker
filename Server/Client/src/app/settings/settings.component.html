@@ -1,1 +1,56 @@
-<p>settings works!</p>
+<mat-toolbar>
+    <span>Einstellungen</span>
+</mat-toolbar>
+
+<form *ngIf="settings">
+    <!-- <label>
+    Open close treshold:
+    <input type="number" [(ngModel)]="settings.openCloseTreshold">
+  </label> -->
+    <div>
+        <mat-slide-toggle name="AutoMode" [(ngModel)]="settings.isAutoMode">Auto Mode</mat-slide-toggle>
+    </div>
+    <div>
+        <div>
+            <label class="label" for="Temp"> Schwellwert Klappe:</label>
+        </div>
+        <div>
+            <mat-slider class="input" name="Temp" thumbLabel min="50" max="250" step="1" type="number" [(ngModel)]="settings.openCloseTreshold">
+            </mat-slider>
+            <span class="value">{{settings.openCloseTreshold | temperatur}}</span>
+        </div>
+    </div>
+    <div>
+        <mat-slide-toggle name="AutoMode" (change)="fireNotifactionActiveToggleChanged($event)" [checked]="fireNotificationActiveVisible">Benacrichtigung Feuerraum</mat-slide-toggle>
+    </div>
+    <div *ngIf="fireNotificationActiveVisible">
+        <div>
+            <label class="label" for="Temp">Temperatur für Benachrichtigung Feuerraum:</label>
+        </div>
+        <div>
+            <mat-slider class="input" name="Temp" thumbLabel min="25" max="350" step="1" type="number" [(ngModel)]="settings.fireNotifcationTemperatur">
+            </mat-slider>
+            <span class="value">{{settings.fireNotifcationTemperatur | temperatur}}</span>
+        </div>
+    </div>
+    <div>
+        <div>
+            <label class="label" for="Temp">Updatezyklus Temperaturen in Sekunden</label>
+        </div>
+        <div>
+            <mat-slider class="input" name="Temp" thumbLabel min="20" max="300" step="10" type="number" [(ngModel)]="settings.temperaturUpdateCycleSeconds">
+            </mat-slider>
+            <span class="value">{{settings.temperaturUpdateCycleSeconds}}</span>
+        </div>
+    </div>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="false">Speichern</button>
+</form>
+
+
+<mat-toolbar>
+    Infos
+</mat-toolbar>
+<mat-list *ngIf="settings">
+    <mat-list-item>Letzte Änderung: {{settings.lastSettingsUpdate | date:'dd.MM.yyyy HH:mm:ss '}}</mat-list-item>
+    <mat-list-item>Aktualiert von: {{settings.lastSettingsUpdateUser}}</mat-list-item>
+</mat-list>

@@ -36,5 +36,11 @@ namespace api.Model.Dababase
         [Column("TIME_STAMP_RECEIVED")]
         public DateTime TimeStampeReceived { get; set; }
 
+        [Column("OPEN_CLOSE_STATE")]
+        public double OpenCloseState { get; set; }
+
+        [Column("IS_AUTO_MODE")]
+        public bool IsAutoMode { get; set; }
+
     }
 }

@@ -10,13 +10,9 @@
  * Do not edit the class manually.
  */
 
-export interface MeasurementClient { 
-    measurementId?: string;
-    fireSensor?: number;
-    contentSensor?: number;
-    sensor1?: number;
-    sensor2?: number;
-    sensor3?: number;
-    sensor4?: number;
-    timeStampSmoker?: Date;
+export interface AlertClient { 
+    alertId?: string;
+    sensorId?: number;
+    temperatur?: number;
+    alertType?: string;
 }

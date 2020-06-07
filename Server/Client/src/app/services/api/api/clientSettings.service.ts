@@ -17,14 +17,14 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { MeasurementSmoker } from '../model/measurementSmoker';
+import { SettingsClient } from '../model/settingsClient';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
 
 
 @Injectable()
-export class SmokerService {
+export class ClientSettingsService {
 
     protected basePath = '/';
     public defaultHeaders = new HttpHeaders();
@@ -61,10 +61,10 @@ export class SmokerService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public smokerGet(observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public smokerGet(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public smokerGet(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public smokerGet(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public clientSettingsCurrentGet(observe?: 'body', reportProgress?: boolean): Observable<SettingsClient>;
+    public clientSettingsCurrentGet(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<SettingsClient>>;
+    public clientSettingsCurrentGet(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<SettingsClient>>;
+    public clientSettingsCurrentGet(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
 
@@ -88,47 +88,7 @@ export class SmokerService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Array<string>>('get',`${this.basePath}/Smoker`,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * 
-     * 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public smokerLatestGet(observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public smokerLatestGet(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public smokerLatestGet(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public smokerLatestGet(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-        let headers = this.defaultHeaders;
-
-        // authentication (Bearer) required
-        if (this.configuration.apiKeys && this.configuration.apiKeys["Authorization"]) {
-            headers = headers.set('Authorization', this.configuration.apiKeys["Authorization"]);
-        }
-
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-        ];
-        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set('Accept', httpHeaderAcceptSelected);
-        }
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-        ];
-
-        return this.httpClient.request<any>('get',`${this.basePath}/Smoker/latest`,
+        return this.httpClient.request<SettingsClient>('get',`${this.basePath}/Client/Settings/current`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -145,10 +105,10 @@ export class SmokerService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public smokerPost(body?: MeasurementSmoker, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public smokerPost(body?: MeasurementSmoker, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public smokerPost(body?: MeasurementSmoker, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public smokerPost(body?: MeasurementSmoker, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public clientSettingsCurrentPost(body?: SettingsClient, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public clientSettingsCurrentPost(body?: SettingsClient, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public clientSettingsCurrentPost(body?: SettingsClient, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public clientSettingsCurrentPost(body?: SettingsClient, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
 
         let headers = this.defaultHeaders;
@@ -177,7 +137,7 @@ export class SmokerService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<any>('post',`${this.basePath}/Smoker`,
+        return this.httpClient.request<any>('post',`${this.basePath}/Client/Settings/current`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

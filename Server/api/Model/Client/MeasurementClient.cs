@@ -20,5 +20,8 @@ namespace api.Model.Client
 
         public DateTime TimeStampSmoker { get; set; }
 
+        public double OpenCloseState { get; set; }
+
+        public bool IsAutoMode { get; set; }
     }
 }

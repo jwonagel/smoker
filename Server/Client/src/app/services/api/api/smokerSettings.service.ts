@@ -24,7 +24,7 @@ import { Configuration }                                     from '../configurat
 
 
 @Injectable()
-export class SettingsService {
+export class SmokerSettingsService {
 
     protected basePath = '/';
     public defaultHeaders = new HttpHeaders();
@@ -61,12 +61,17 @@ export class SettingsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public settingsLatestGet(observe?: 'body', reportProgress?: boolean): Observable<SettingsSmoker>;
-    public settingsLatestGet(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<SettingsSmoker>>;
-    public settingsLatestGet(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<SettingsSmoker>>;
-    public settingsLatestGet(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public smokerSettingsLatestGet(observe?: 'body', reportProgress?: boolean): Observable<SettingsSmoker>;
+    public smokerSettingsLatestGet(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<SettingsSmoker>>;
+    public smokerSettingsLatestGet(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<SettingsSmoker>>;
+    public smokerSettingsLatestGet(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
+
+        // authentication (Bearer) required
+        if (this.configuration.apiKeys && this.configuration.apiKeys["Authorization"]) {
+            headers = headers.set('Authorization', this.configuration.apiKeys["Authorization"]);
+        }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
@@ -83,7 +88,7 @@ export class SettingsService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<SettingsSmoker>('get',`${this.basePath}/Settings/latest`,
+        return this.httpClient.request<SettingsSmoker>('get',`${this.basePath}/Smoker/Settings/latest`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,

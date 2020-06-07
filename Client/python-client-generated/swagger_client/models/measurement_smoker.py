@@ -36,7 +36,9 @@ class MeasurementSmoker(object):
         'sensor2': 'float',
         'sensor3': 'float',
         'sensor4': 'float',
-        'time_stamp': 'datetime'
+        'time_stamp': 'datetime',
+        'open_close_state': 'float',
+        'is_auto_mode': 'bool'
     }
 
     attribute_map = {
@@ -47,10 +49,12 @@ class MeasurementSmoker(object):
         'sensor2': 'sensor2',
         'sensor3': 'sensor3',
         'sensor4': 'sensor4',
-        'time_stamp': 'timeStamp'
+        'time_stamp': 'timeStamp',
+        'open_close_state': 'openCloseState',
+        'is_auto_mode': 'isAutoMode'
     }
 
-    def __init__(self, measurement_id=None, fire_sensor=None, content_sensor=None, sensor1=None, sensor2=None, sensor3=None, sensor4=None, time_stamp=None):  # noqa: E501
+    def __init__(self, measurement_id=None, fire_sensor=None, content_sensor=None, sensor1=None, sensor2=None, sensor3=None, sensor4=None, time_stamp=None, open_close_state=None, is_auto_mode=None):  # noqa: E501
         """MeasurementSmoker - a model defined in Swagger"""  # noqa: E501
         self._measurement_id = None
         self._fire_sensor = None
@@ -60,6 +64,8 @@ class MeasurementSmoker(object):
         self._sensor3 = None
         self._sensor4 = None
         self._time_stamp = None
+        self._open_close_state = None
+        self._is_auto_mode = None
         self.discriminator = None
         if measurement_id is not None:
             self.measurement_id = measurement_id
@@ -77,6 +83,10 @@ class MeasurementSmoker(object):
             self.sensor4 = sensor4
         if time_stamp is not None:
             self.time_stamp = time_stamp
+        if open_close_state is not None:
+            self.open_close_state = open_close_state
+        if is_auto_mode is not None:
+            self.is_auto_mode = is_auto_mode
 
     @property
     def measurement_id(self):
@@ -245,6 +255,48 @@ class MeasurementSmoker(object):
         """
 
         self._time_stamp = time_stamp
+
+    @property
+    def open_close_state(self):
+        """Gets the open_close_state of this MeasurementSmoker.  # noqa: E501
+
+
+        :return: The open_close_state of this MeasurementSmoker.  # noqa: E501
+        :rtype: float
+        """
+        return self._open_close_state
+
+    @open_close_state.setter
+    def open_close_state(self, open_close_state):
+        """Sets the open_close_state of this MeasurementSmoker.
+
+
+        :param open_close_state: The open_close_state of this MeasurementSmoker.  # noqa: E501
+        :type: float
+        """
+
+        self._open_close_state = open_close_state
+
+    @property
+    def is_auto_mode(self):
+        """Gets the is_auto_mode of this MeasurementSmoker.  # noqa: E501
+
+
+        :return: The is_auto_mode of this MeasurementSmoker.  # noqa: E501
+        :rtype: bool
+        """
+        return self._is_auto_mode
+
+    @is_auto_mode.setter
+    def is_auto_mode(self, is_auto_mode):
+        """Sets the is_auto_mode of this MeasurementSmoker.
+
+
+        :param is_auto_mode: The is_auto_mode of this MeasurementSmoker.  # noqa: E501
+        :type: bool
+        """
+
+        self._is_auto_mode = is_auto_mode
 
     def to_dict(self):
         """Returns the model properties as a dict"""
