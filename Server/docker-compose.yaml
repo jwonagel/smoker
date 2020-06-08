@@ -37,14 +37,37 @@ services:
     depends_on: 
       - 'mysql'
     ports: 
-      - 9080:80
-      - 9081:443
+      - 9090:80
+      - 9091:443
     environment: 
       - connectionString=${connectionString}
+      - Authority=https://identity:5123
     deploy:
       restart_policy:
         condition: on-failure
 
+  auth:
+    container_name: identity
+    build: 
+      context: ./AuthServer
+    networks: 
+      - smokernet
+    depends_on: 
+      - 'mysql'
+    volumes:
+      - /etc/letsencrypt/live/roadchiefs.ddns.net:/cert
+    ports: 
+      - 9090:80
+      - 9091:443
+    environment: 
+      - connectionString=${connectionStringAuth}
+      - ASPNETCORE_URLS=https://identity:443
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/cert/fullchain.pem
+      - ASPNETCORE_Kestrel__Certificates__Default__Key=/cert/privkey.pem
+      - ClientUrl=https://*:443
+    deploy:
+      restart_policy:
+        condition: on-failure
 
 networks:
   smokernet:
