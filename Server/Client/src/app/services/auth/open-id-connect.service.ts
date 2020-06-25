@@ -23,7 +23,7 @@ export class OpenIdConnectService {
 
   constructor() {
     this.userManager = new UserManager({
-      authority: environment.stsServer,
+      authority: 'https://roadchiefs.ddns.net/auth',
       client_id: 'smokerclient',
       redirect_uri: `${window.location.origin}/signin-oidc`,
       scope: 'openid profile roles smokerapi',

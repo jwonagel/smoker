@@ -94,6 +94,7 @@ namespace api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Smoker API", Version = "v1" });
+                
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
@@ -159,28 +160,29 @@ namespace api
             app.UseCors(MyAllowSpecificOrigins);
 
             UpdateDatabase(app);
-            app.UseSwagger();
-
-            app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Smoker API V1");
-                });
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            
-
-            app.UseEndpoints(endpoints =>
+            app.Map("/api", builder => 
             {
-                endpoints.MapHub<MessageHub>("/messagehub");
-                endpoints.MapControllers();
+                builder.UseCors(MyAllowSpecificOrigins);
+                builder.UseSwagger();
+                builder.UseSwaggerUI(c =>
+                    {
+                        c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "Smoker API V1");
+                    });
+                builder.UseRouting();
+                builder.UseAuthentication();
+                builder.UseAuthorization();
+
+                builder.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapHub<MessageHub>("/messagehub");
+                    endpoints.MapControllers();
+                });
             });
         }
 

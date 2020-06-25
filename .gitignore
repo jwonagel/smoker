@@ -6,4 +6,5 @@
 env.sh
 *.pem
 *.pfx
-data/*
+Server/data
+Server/cert

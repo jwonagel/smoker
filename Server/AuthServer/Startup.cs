@@ -5,6 +5,7 @@
 using System;
 using AuthServer.Data;
 using AuthServer.Models;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -90,8 +91,25 @@ namespace AuthServer
                 .AddInMemoryClients(Config.GetClients())
                 .AddAspNetIdentity<ApplicationUser>();
 
-            // not recommended for production - you need to store your key material somewhere secure
-            builder.AddDeveloperSigningCredential();
+            if(Environment.IsDevelopment())
+            {
+                builder.AddDeveloperSigningCredential();
+            }
+            else
+            {   
+                string pwd = System.Environment.GetEnvironmentVariable("ASPNETCORE_Kestrel__Certificates__Default__Password");
+                var certificate = System.Environment.GetEnvironmentVariable("ASPNETCORE_Kestrel__Certificates__Default__Path");
+
+                var cert = new X509Certificate2(
+                                certificate,
+                                pwd,
+                                X509KeyStorageFlags.MachineKeySet |
+                                X509KeyStorageFlags.PersistKeySet |
+                                X509KeyStorageFlags.Exportable
+                            );
+
+                builder.AddSigningCredential(cert);
+            }
         }
 
         public void Configure(IApplicationBuilder app)
@@ -105,14 +123,29 @@ namespace AuthServer
 
             app.UseCors(MyAllowSpecificOrigins);
 
-            app.UseStaticFiles();
+            // app.UseStaticFiles();
 
-            app.UseRouting();
-            app.UseIdentityServer();
-            app.UseAuthorization();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapDefaultControllerRoute();
+            // app.UseRouting();
+            // app.UseIdentityServer();
+            // app.UseAuthorization();
+
+            // app.UseEndpoints(endpoints =>
+            // {
+            //     endpoints.MapDefaultControllerRoute();
+            // });
+
+            
+            app.Map("/auth", builder => {
+                builder.UseCors(MyAllowSpecificOrigins);
+                builder.UseStaticFiles();
+                builder.UseRouting();
+                builder.UseIdentityServer();
+                builder.UseAuthorization();
+
+                builder.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapDefaultControllerRoute();
+                });
             });
         }
 

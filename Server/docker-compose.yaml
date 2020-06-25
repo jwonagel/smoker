@@ -2,6 +2,24 @@ version: '3.1'
 
 services:
 
+  client:
+    container_name: web
+    build:
+      context: ./Client
+    networks:
+      - smokernet
+    depends_on:
+      - api
+      - auth
+    ports:
+      - 443:443
+      - 80:80
+    volumes:
+      # - ./cert:/etc/ssl/
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
   mysql:
     container_name: mysql
     image: nagel/docker-raspberry-pi-mariadb:10.1.37
@@ -37,11 +55,17 @@ services:
     depends_on: 
       - 'mysql'
     ports: 
-      - 9090:80
-      - 9091:443
+      - 8090:80
+      - 8091:443
+    volumes:
+      # - ./cert:/cert
+      - ./data/certbot/conf:/cert
     environment: 
       - connectionString=${connectionString}
-      - Authority=https://identity:5123
+      - Authority=https://roadchiefs.ddns.net/auth/
+      - ASPNETCORE_URLS=https://+:443
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${pass}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/cert/live/roadchiefs.ddns.net/certificate.pfx
     deploy:
       restart_policy:
         condition: on-failure
@@ -55,19 +79,34 @@ services:
     depends_on: 
       - 'mysql'
     volumes:
-      - /etc/letsencrypt/live/roadchiefs.ddns.net:/cert
+      # - ./cert:/cert
+      - ./data/certbot/conf:/cert
+      - /home/pi/test/usr:/tmpusr
     ports: 
       - 9090:80
       - 9091:443
     environment: 
       - connectionString=${connectionStringAuth}
-      - ASPNETCORE_URLS=https://identity:443
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/cert/fullchain.pem
-      - ASPNETCORE_Kestrel__Certificates__Default__Key=/cert/privkey.pem
-      - ClientUrl=https://*:443
+      - ASPNETCORE_URLS=https://+:443
+      # - ASPNETCORE_Kestrel__Certificates__Default__Password=6d1JEkjE6aUOZNHs
+      # - ASPNETCORE_Kestrel__Certificates__Default__Path=/cert/roadchiefs.ddns.net.pfx
+      - smokerSecret=${smokerSecret}
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${pass}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/cert/live/roadchiefs.ddns.net/certificate.pfx
+      - ClientUrl=https://roadchiefs.ddns.net
     deploy:
       restart_policy:
         condition: on-failure
+
+  certbot:
+    image: tobi312/rpi-certbot
+    container_name: certbot
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    environment:
+      - pass:${pass} 
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 networks:
   smokernet:

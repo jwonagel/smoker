@@ -21,3 +21,4 @@ FROM nginx:1.19
 COPY ./dist/out/ /usr/share/nginx/html 
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+# COPY ./cert/roadchiefs.ddns.net/ /etc/ssl

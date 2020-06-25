@@ -31,6 +31,7 @@ namespace AuthServer
         public static IEnumerable<Client> GetClients()
         {
             var clientUri = Environment.GetEnvironmentVariable("ClientUrl");
+            var smokerSecret = Environment.GetEnvironmentVariable("smokerSecret");
             return new Client[]
             {
                 // SPA client using code flow + pkce
@@ -63,7 +64,7 @@ namespace AuthServer
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     ClientSecrets = 
                     {
-                        new Secret("secret".Sha256())
+                        new Secret(smokerSecret.Sha256())
                     },
                     AllowedScopes = {
                         "smokerapi"

@@ -19,7 +19,7 @@ namespace AuthServer
 {
     public class SeedData
     {
-        public static void EnsureSeedData(string connectionString)
+        public static void EnsureSeedData(string connectionString, string pathToUserJson)
         {
             var services = new ServiceCollection();
             services.AddLogging();
@@ -34,6 +34,9 @@ namespace AuthServer
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            var users = UserModel.LoadData(pathToUserJson);
+
+
             using (var serviceProvider = services.BuildServiceProvider())
             {
                 using (var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
@@ -42,74 +45,44 @@ namespace AuthServer
                     context.Database.Migrate();
 
                     var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                    var alice = userMgr.FindByNameAsync("alice").Result;
-                    if (alice == null)
-                    {
-                        alice = new ApplicationUser
-                        {
-                            UserName = "alice"
-                        };
-                        var result = userMgr.CreateAsync(alice, "Pass123$").Result;
-                        if (!result.Succeeded)
-                        {
-                            throw new Exception(result.Errors.First().Description);
-                        }
 
-                        result = userMgr.AddClaimsAsync(alice, new Claim[]{
-                        new Claim(JwtClaimTypes.Name, "Alice Smith"),
-                        new Claim(JwtClaimTypes.GivenName, "Alice"),
-                        new Claim(JwtClaimTypes.FamilyName, "Smith"),
-                        new Claim(JwtClaimTypes.Email, "AliceSmith@email.com"),
-                        new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
-                        new Claim(JwtClaimTypes.WebSite, "http://alice.com"),
-                        new Claim(JwtClaimTypes.Address, @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }", IdentityServer4.IdentityServerConstants.ClaimValueTypes.Json),
-                        new Claim(JwtClaimTypes.Role, "admin")
-                    }).Result;
-                        if (!result.Succeeded)
-                        {
-                            throw new Exception(result.Errors.First().Description);
-                        }
-                        Log.Debug("alice created");
-                    }
-                    else
+                    foreach(var user in users)
                     {
-                        Log.Debug("alice already exists");
-                    }
-                    
-                    var bob = userMgr.FindByNameAsync("bob").Result;
-                    if (bob == null)
-                    {
-                        bob = new ApplicationUser
+                        var dbuser = userMgr.FindByNameAsync(user.GivenName).Result;
+                        if (dbuser == null)
                         {
-                            UserName = "bob"
-                        };
-                        var result = userMgr.CreateAsync(bob, "Pass123$").Result;
-                        if (!result.Succeeded)
-                        {
-                            throw new Exception(result.Errors.First().Description);
-                        }
+                            dbuser = new ApplicationUser
+                            {
+                                UserName = user.GivenName.ToLower()
+                            };
 
-                        result = userMgr.AddClaimsAsync(bob, new Claim[]{
-                        new Claim(JwtClaimTypes.Name, "Bob Smith"),
-                        new Claim(JwtClaimTypes.GivenName, "Bob"),
-                        new Claim(JwtClaimTypes.FamilyName, "Smith"),
-                        new Claim(JwtClaimTypes.Email, "BobSmith@email.com"),
-                        new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
-                        new Claim(JwtClaimTypes.WebSite, "http://bob.com"),
-                        new Claim(JwtClaimTypes.Address, @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }", IdentityServer4.IdentityServerConstants.ClaimValueTypes.Json),
-                        new Claim("location", "somewhere"),
-                        new Claim(JwtClaimTypes.Role, "user")
-                    }).Result;
-                        if (!result.Succeeded)
+                            var result = userMgr.CreateAsync(dbuser, user.Password).Result;
+
+                            if (!result.Succeeded)
+                            {
+                                throw new Exception(result.Errors.First().Description);
+                            }
+
+                            result = userMgr.AddClaimsAsync(dbuser, new Claim[]{
+                                new Claim(JwtClaimTypes.Name, user.Name),
+                                new Claim(JwtClaimTypes.GivenName, user.GivenName),
+                                new Claim(JwtClaimTypes.Email, user.Email),
+                                new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
+                                new Claim(JwtClaimTypes.Role, user.Role)
+                            }).Result;
+                            if (!result.Succeeded)
+                            {
+                                throw new Exception(result.Errors.First().Description);
+                            }
+                            Log.Debug($"User {user.Name} created");
+                        } 
+                        else 
                         {
-                            throw new Exception(result.Errors.First().Description);
+                            Log.Debug($"User {user.Name} already exists");
                         }
-                        Log.Debug("bob created");
                     }
-                    else
-                    {
-                        Log.Debug("bob already exists");
-                    }
+
+
 
                 }
             }

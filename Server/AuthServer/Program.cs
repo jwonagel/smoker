@@ -11,6 +11,8 @@ using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using System.Net;
 
 namespace AuthServer
 {
@@ -49,7 +51,7 @@ namespace AuthServer
                     Log.Information("Seeding database...");
                     var config = host.Services.GetRequiredService<IConfiguration>();
                     var connectionString = System.Environment.GetEnvironmentVariable("connectionString");
-                    SeedData.EnsureSeedData(connectionString);
+                    SeedData.EnsureSeedData(connectionString, args[0]);
                     Log.Information("Done seeding database.");
                     return 0;
                 }
