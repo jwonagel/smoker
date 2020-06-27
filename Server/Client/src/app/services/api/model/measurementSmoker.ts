@@ -21,4 +21,5 @@ export interface MeasurementSmoker {
     timeStamp?: Date;
     openCloseState: number;
     isAutoMode: boolean;
+    isSmokerConnected: boolean;
 }

@@ -12,6 +12,8 @@ export class SignalRService {
   connectionEstablished = new EventEmitter<boolean>();
   settingsUpdateEvent = new EventEmitter<string>();
   measurementUpdateEvent = new EventEmitter<string>();
+  opencloseEvent = new EventEmitter<OpenCloseModel>();
+
   connectionEstablieshedValue = false;
 
   private hubConnection: HubConnection;
@@ -68,6 +70,9 @@ export class SignalRService {
           console.warn(`Event ${type} with Content ${content} not handled`);
           break;
       }
+    });
+    this.hubConnection.on("ReceiveUpdateOpenCloseState", (OpenCloseModel: OpenCloseModel) => {
+
     });
   }
 }

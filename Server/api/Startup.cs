@@ -49,16 +49,7 @@ namespace api
                     mysqlOptions =>
                         mysqlOptions.ServerVersion(new ServerVersion(new Version(10, 4, 6), ServerType.MariaDb))));
 
-            // services.AddCors(options =>
-            // {
-            //     options.AddPolicy(name: MyAllowSpecificOrigins,
-            //                       builder =>
-            //                       {
-            //                           builder.WithOrigins("*")
-            //                           .AllowAnyHeader()
-            //                           .AllowAnyMethod();
-            //                       });
-            // });
+
 
             services.AddCors(options =>
             {
@@ -88,6 +79,7 @@ namespace api
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<ISmokerService, SmokerService>();
             services.AddScoped<IUserInfoService, UserInfoService>();
+            services.AddSingleton<ISmokerConnectionService, SmokerConnectionService>();
             services.AddControllers();
 
             // Register the Swagger generator, defining 1 or more Swagger documents

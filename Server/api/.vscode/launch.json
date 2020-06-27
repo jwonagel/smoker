@@ -20,7 +20,7 @@
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
                 "connectionString": "Server=localhost; Database=smoker;User=root;Password=O71gycN1lDOMr5WG;",
-                "Authority": "https://localhost:5123"
+                "Authority": "https://roadchiefs.ddns.net/auth"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"

@@ -28,13 +28,16 @@ namespace api.Services
         private readonly IMapper _mapper;
         private readonly IHubContext<MessageHub, IMessageHub> _messageHub;
         private IUserInfoService _userInfoService;
+        private readonly ISmokerConnectionService _smokerConnectionService;
 
-        public SmokerService(SmokerDBContext context, IMapper mapper, IHubContext<MessageHub, IMessageHub> messageHub, IUserInfoService userInfoService)
+
+        public SmokerService(SmokerDBContext context, IMapper mapper, IHubContext<MessageHub, IMessageHub> messageHub, IUserInfoService userInfoService, ISmokerConnectionService smokerConnectionService)
         {
             _context = context;
             _mapper = mapper;
             _messageHub = messageHub;
             _userInfoService = userInfoService;
+            _smokerConnectionService = smokerConnectionService;
         }
 
         public async Task<bool> AddMessurement(MeasurementSmoker measurement)
@@ -90,7 +93,9 @@ namespace api.Services
                 .OrderByDescending(m => m.TimeStampeReceived)
                 .FirstOrDefaultAsync();
 
-            return _mapper.Map<MeasurementClient>(measurement);
+            var clientMeasurement = _mapper.Map<MeasurementClient>(measurement);
+            clientMeasurement.IsSmokerConnected = _smokerConnectionService.IsSmokerConnected;
+            return clientMeasurement;
         }
 
         private Measurement MapToMeasurement(MeasurementSmoker measurement)

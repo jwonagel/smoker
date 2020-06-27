@@ -4,8 +4,9 @@
 
 export const environment = {
   production: false,
-  API_BASE_PATH: 'https://localhost:5001',
-  stsServer: 'https://localhost:5123'
+  API_BASE_PATH: 'https://localhost:5001/api',
+  stsServer: 'https://roadchiefs.ddns.net/auth',
+  client_id: 'devclient'
 };
 
 /*

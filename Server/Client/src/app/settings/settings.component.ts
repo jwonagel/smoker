@@ -11,13 +11,15 @@ import { SignalRService } from '../services/signalr/signal-r.service';
 export class SettingsComponent implements OnInit {
 
   settings: SettingsClient;
-  fireNotificationActiveVisible: boolean;
+  fireNotificationActiveVisible = true;
 
   private isSaving = false;
 
+
   constructor(private settingsService: ClientSettingsService,
               private snackBar: MatSnackBar,
-              private signalRService: SignalRService) { }
+              private signalRService: SignalRService) {
+            }
 
 
   ngOnInit(): void {

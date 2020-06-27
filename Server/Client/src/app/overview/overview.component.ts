@@ -31,7 +31,7 @@ export class OverviewComponent implements OnInit {
     this.getLatestMeasurement();
     this.signalRService.connectionEstablished
       .subscribe((e: boolean) => this.connectionEstablished = e);
-    this.signalRService.measurementUpdateEvent.subscribe((value:string) => {
+    this.signalRService.measurementUpdateEvent.subscribe((value: string) => {
       if (value === 'Update'){
         this.getLatestMeasurement();
       }

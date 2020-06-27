@@ -24,7 +24,7 @@ export class OpenIdConnectService {
   constructor() {
     this.userManager = new UserManager({
       authority: 'https://roadchiefs.ddns.net/auth',
-      client_id: 'smokerclient',
+      client_id: environment.client_id,
       redirect_uri: `${window.location.origin}/signin-oidc`,
       scope: 'openid profile roles smokerapi',
       response_type: 'id_token token',

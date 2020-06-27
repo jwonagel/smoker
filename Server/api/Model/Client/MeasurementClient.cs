@@ -23,5 +23,8 @@ namespace api.Model.Client
         public double OpenCloseState { get; set; }
 
         public bool IsAutoMode { get; set; }
+
+        public bool IsSmokerConnected { get; set; }        
+
     }
 }

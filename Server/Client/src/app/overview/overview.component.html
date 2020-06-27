@@ -24,13 +24,19 @@
 <mat-toolbar>
     <span>Status</span>
 </mat-toolbar>
-<form>
+<div class="status">
     <div>
-        <mat-slide-toggle name="AutoMode" (change)="onAutoModeToggleChange($event)" [(ngModel)]="autoMode">Auto Mode</mat-slide-toggle>
+        <div *ngIf="latestMeasurement.isSmokerConnected" style="color: green;">Smoker ist mit Server verbunden</div>
+        <div *ngIf="latestMeasurement && !latestMeasurement.isSmokerConnected" style="color: red;">Smoker ist nicht verbunden</div>
     </div>
-    <div>
-        <mat-slider [disabled]="autoMode" (change)="onOpenCloseChangeEvent($event)" class="input " name="OpenClose " thumbLabel min="0 " max="100 " step="1 " type="number " [(ngModel)]="openClose">
-        </mat-slider>
-        <span class="value">{{openClose}}</span>
-    </div>
-</form>
+    <form>
+        <div>
+            <mat-slide-toggle [disabled]="!latestMeasurement.isSmokerConnected" name="AutoMode" (change)="onAutoModeToggleChange($event)" [(ngModel)]="autoMode">Auto Mode</mat-slide-toggle>
+        </div>
+        <div>
+            <mat-slider [disabled]="autoMode && !latestMeasurement.isSmokerConnected" (change)="onOpenCloseChangeEvent($event)" class="input " name="OpenClose " thumbLabel min="0 " max="100 " step="1 " type="number " [(ngModel)]="openClose">
+            </mat-slider>
+            <span class="value">{{openClose}}</span>
+        </div>
+    </form>
+</div>
