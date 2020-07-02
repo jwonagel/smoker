@@ -1,8 +1,3 @@
-mat-slider {
-    width: 50%;
-    max-width: 250px;
-}
-
 mat-label {
     padding-right: 10px;
     width: 200px;
@@ -15,4 +10,9 @@ mat-label {
 
 form {
     margin-left: 20px;
+}
+
+mat-slider {
+    width: 80%;
+    max-width: 400px;
 }

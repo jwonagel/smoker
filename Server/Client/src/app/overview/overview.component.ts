@@ -23,6 +23,7 @@ export class OverviewComponent implements OnInit {
   latestMeasurement: MeasurementSmoker;
   autoMode: boolean;
   openClose: number;
+  timeStamp = new Date(2020, 1, 1);
   private connectionEstablished: boolean;
 
   // txtMessage = '';
@@ -43,8 +44,9 @@ export class OverviewComponent implements OnInit {
       .subscribe((e: MeasurementSmoker) =>
         {
           this.latestMeasurement = e;
+          this.timeStamp = new Date(e.timeStampSmoker);
           this.autoMode = e.isAutoMode;
-          this.openClose = e.openCloseState * 100;
+          this.openClose = Math.round(e.openCloseState * 100);
         });
   }
 
@@ -56,7 +58,6 @@ export class OverviewComponent implements OnInit {
   onOpenCloseChangeEvent(event: MatSliderChange): void {
     this.updateOpenCloseModel();
   }
-
 
 
   private updateOpenCloseModel(): void {
@@ -71,6 +72,8 @@ export class OverviewComponent implements OnInit {
       });
     }
   }
+
+
 
   // private subscribeToEvents(): void {
   //   this.signalRService.messageReceived.subscribe((message: string) => {
