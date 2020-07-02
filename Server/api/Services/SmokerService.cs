@@ -110,6 +110,8 @@ namespace api.Services
                 Sensor3 = measurement.Sensor3,
                 Sensor4 = measurement.Sensor4,
                 TimeStampSmoker = measurement.TimeStamp,
+                OpenCloseState = measurement.OpenCloseState,
+                IsAutoMode = measurement.IsAutoMode
             };
         }
 

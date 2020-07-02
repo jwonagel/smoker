@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace api.Hubs
 {
@@ -42,6 +43,7 @@ namespace api.Hubs
         public override async Task OnDisconnectedAsync(System.Exception exception)
         {
             var groupName = GetGroupOfUserAsync();
+            Console.WriteLine("Disconnect: " + groupName);
             if (groupName == SmokerGroupName && _smokerConnectionService is SmokerConnectionService smokerConnectionService)
             {
                 smokerConnectionService.IsSmokerConnected = false;
@@ -52,6 +54,7 @@ namespace api.Hubs
         public override async Task OnConnectedAsync()
         {
             var groupName = GetGroupOfUserAsync();
+            Console.WriteLine("Disconnect: " + groupName);
             if (groupName == SmokerGroupName && _smokerConnectionService is SmokerConnectionService smokerConnectionService)
             {
                 smokerConnectionService.IsSmokerConnected = true;
