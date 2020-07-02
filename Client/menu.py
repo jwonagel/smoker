@@ -1,17 +1,14 @@
 import numpy as np
-from time import sleep
+import time
 from settings import Settings
-
-
-        
 
 
 class Main_menu:
 
-    def __init__(self, write_function, clear_function, gpio, settings):
+    def __init__(self, write_function, clear_function, gpio, settings, open_close_state):
         self.menu_items = []
         self.menu_items.append(Temparatur_menu(write_function, clear_function))
-        self.menu_items.append(Manuel_mode_menu(write_function, clear_function, gpio, settings))
+        self.menu_items.append(Manuel_mode_menu(write_function, clear_function, settings, open_close_state))
         self.menu_items.append(Auto_mode_menu(write_function, clear_function, gpio, settings))
         self.menu_items.append(Info_menu(write_function, clear_function, settings))
 
@@ -103,42 +100,34 @@ class Auto_mode_menu(Abstract_menu_item):
         while self.gpio.is_up_pressed() and self.settings.open_close_treshold < 300:
             self.settings.open_close_treshold += 1
             self.__write_current_value()
-            sleep(0.2)
+            time.sleep(0.2)
 
     def on_down_pressed(self):
         self.settings.is_auto_mode = True
         while self.gpio.is_down_pressed() and self.settings.open_close_treshold > 20:
             self.settings.open_close_treshold -= 1
             self.__write_current_value()
-            sleep(0.2)
+            time.sleep(0.2)
 
 
 class Manuel_mode_menu(Abstract_menu_item):
-    def __init__(self, write_function, clear_function, gpio, settings):
+    def __init__(self, write_function, clear_function, settings, open_close_state):
         super().__init__(write_function, clear_function)
-        self.gpio = gpio
         self.settings = settings
+        self.open_close_state = open_close_state
     
     def on_up_pressed(self):
         self.settings.is_auto_mode = False
         self.clear_function()
         self.write_function('Opening')
-        while self.gpio.is_up_pressed():
-            self.gpio.open()
-            sleep(0.1)
-
-        self.gpio.stop_motor()
+        self.open_close_state.handle_open()
         self.activate()
 
     def on_down_pressed(self):
         self.settings.is_auto_mode = False
         self.clear_function()
         self.write_function('Closing')
-        while self.gpio.is_down_pressed():
-            self.gpio.close()
-            sleep(0.1)
-
-        self.gpio.stop_motor()
+        self.open_close_state.handle_close()
         self.activate()
 
     def activate(self):

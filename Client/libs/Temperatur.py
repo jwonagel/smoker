@@ -44,6 +44,7 @@ class temperatur_sensor:
     def _calc_prope_temp(self, value):
         return interpolate.splev([value], self.tck)[0]
 
+
     def get_temperatur(self, channel):
         value = self._analogInput(channel)
         if channel > 1:
@@ -57,7 +58,7 @@ class temperatur_sensor:
         for i in range(channel_to):
             value = self._analogInput(i)
             if self.treshold_non_connect < value:
-                continue
+                values[i] = 0.0
             elif i < 2:
                 values[i] = self._calc_ptc_temp(value)
             else:
