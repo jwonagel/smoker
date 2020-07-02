@@ -9,7 +9,7 @@ export class TemperaturPipe implements PipeTransform {
     if (value === null || value === 0){
       return 'Nicht angeschlossen';
     }
-    return value + 'C°';
+    return (Math.round(value * 10) / 10).toFixed(1) + ' C°';
   }
 
 }

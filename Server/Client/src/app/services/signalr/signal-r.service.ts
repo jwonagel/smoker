@@ -71,8 +71,8 @@ export class SignalRService {
           break;
       }
     });
-    this.hubConnection.on("ReceiveUpdateOpenCloseState", (OpenCloseModel: OpenCloseModel) => {
-
+    this.hubConnection.on('ReceiveUpdateOpenCloseState', (openCloseModel: OpenCloseModel) => {
+      this.opencloseEvent.emit(openCloseModel);
     });
   }
 }

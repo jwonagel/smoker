@@ -19,6 +19,7 @@ export interface MeasurementSmoker {
     sensor3?: number;
     sensor4?: number;
     timeStamp?: Date;
+    timeStampSmoker?: Date;
     openCloseState: number;
     isAutoMode: boolean;
     isSmokerConnected: boolean;

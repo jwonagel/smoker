@@ -1,42 +1,48 @@
 <mat-toolbar>
     <span>Aktuelle Messwerte</span>
 </mat-toolbar>
-<mat-list *ngIf="latestMeasurement">
-    <mat-list-item>
-        <span mat-line>
+<mat-card>
+    <mat-card-content>
+        <mat-list *ngIf="latestMeasurement">
+            <mat-list-item>
+                <span mat-line>
       <mat-icon>
         <fa-icon icon="clock"></fa-icon>
       </mat-icon>
-      <span class="item">Messzeitpunkt: {{latestMeasurement.timeStamp | date:'HH:mm:ss dd.MM.yyyy'}}</span>
-        </span>
-    </mat-list-item>
-    <app-sensor-item [value]='latestMeasurement.fireSensor' [sensorName]='"Feuerraum"' [icon]='"fire-alt"'>
-    </app-sensor-item>
-    <app-sensor-item [value]='latestMeasurement.contentSensor' [sensorName]='"Innenraum"' [icon]='"bacon"'>
-    </app-sensor-item>
-    <app-sensor-item [value]='latestMeasurement.sensor1' [sensorName]='"Sensor 1"'></app-sensor-item>
-    <app-sensor-item [value]='latestMeasurement.sensor2' [sensorName]='"Sensor 2"'></app-sensor-item>
-    <app-sensor-item [value]='latestMeasurement.sensor3' [sensorName]='"Sensor 3"'></app-sensor-item>
-    <app-sensor-item [value]='latestMeasurement.sensor4' [sensorName]='"Sensor 4"'></app-sensor-item>
-</mat-list>
+      <span class="item">Messzeitpunkt: {{timeStamp | date:'HH:mm:ss dd.MM.yyyy'}}</span>
+                </span>
+            </mat-list-item>
+            <app-sensor-item [value]='latestMeasurement.fireSensor' [sensorName]='"Feuerraum"' [icon]='"fire-alt"'>
+            </app-sensor-item>
+            <app-sensor-item [value]='latestMeasurement.contentSensor' [sensorName]='"Innenraum"' [icon]='"bacon"'>
+            </app-sensor-item>
+            <app-sensor-item [value]='latestMeasurement.sensor1' [sensorName]='"Sensor 1"'></app-sensor-item>
+            <app-sensor-item [value]='latestMeasurement.sensor2' [sensorName]='"Sensor 2"'></app-sensor-item>
+            <app-sensor-item [value]='latestMeasurement.sensor3' [sensorName]='"Sensor 3"'></app-sensor-item>
+            <app-sensor-item [value]='latestMeasurement.sensor4' [sensorName]='"Sensor 4"'></app-sensor-item>
+        </mat-list>
+    </mat-card-content>
+</mat-card>
 
 <mat-divider></mat-divider>
 <mat-toolbar>
     <span>Status</span>
 </mat-toolbar>
-<div class="status">
-    <div>
-        <div *ngIf="latestMeasurement.isSmokerConnected" style="color: green;">Smoker ist mit Server verbunden</div>
-        <div *ngIf="latestMeasurement && !latestMeasurement.isSmokerConnected" style="color: red;">Smoker ist nicht verbunden</div>
-    </div>
-    <form>
+<mat-card>
+    <mat-card-content>
         <div>
-            <mat-slide-toggle [disabled]="!latestMeasurement.isSmokerConnected" name="AutoMode" (change)="onAutoModeToggleChange($event)" [(ngModel)]="autoMode">Auto Mode</mat-slide-toggle>
+            <div *ngIf="latestMeasurement && latestMeasurement.isSmokerConnected" style="color: green;">Smoker ist mit Server verbunden</div>
+            <div *ngIf="latestMeasurement && !latestMeasurement.isSmokerConnected" style="color: red;">Smoker ist nicht verbunden</div>
         </div>
         <div>
-            <mat-slider [disabled]="autoMode && !latestMeasurement.isSmokerConnected" (change)="onOpenCloseChangeEvent($event)" class="input " name="OpenClose " thumbLabel min="0 " max="100 " step="1 " type="number " [(ngModel)]="openClose">
-            </mat-slider>
-            <span class="value">{{openClose}}</span>
+            <div>
+                <mat-slide-toggle [disabled]="!(latestMeasurement && latestMeasurement.isSmokerConnected)" name="AutoMode" (change)="onAutoModeToggleChange($event)" [(ngModel)]="autoMode">Auto Mode</mat-slide-toggle>
+            </div>
+            <div class="foo">
+                <mat-slider [disabled]="!(!autoMode && latestMeasurement && latestMeasurement.isSmokerConnected)" (change)="onOpenCloseChangeEvent($event)" class="input " name="OpenClose " thumbLabel min="0 " max="100 " step="1 " type="number" [(ngModel)]="openClose">
+                </mat-slider>
+                <span class="value">{{openClose}} %</span>
+            </div>
         </div>
-    </form>
-</div>
+    </mat-card-content>
+</mat-card>
