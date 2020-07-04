@@ -59,7 +59,7 @@ class OpenCloseState:
         return ratio * self.factor
 
     def _get_factor(self, duration):
-        return duration / ratio
+        return duration / self.factor
 
     def set_ratio(self, ratio):
         if self.open_close_ratio > ratio:
@@ -112,9 +112,9 @@ class OpenCloseState:
         while self.gpio.is_up_pressed():
             self.gpio.open()
             time.sleep(0.1)
+        self.gpio.stop_motor()            
         duration = time.time() - now      
         self.open_close_ratio += self._get_factor(duration) 
-        self.gpio.stop_motor()            
         
 
 
@@ -127,8 +127,11 @@ settings = sett.Settings()
 def load_settings(api_instance, settings):
     try:
         set = api_instance.get_settings()
+        if set is None:
+            set = read_settings()
+        else:
+            sett.write_settings(settings)
         settings.update_settings(set)
-        sett.write_settings(settings)
         return
     except Exception as e:
         print('Error while loading settings')
@@ -150,7 +153,7 @@ temp_menu = main_menu.get_temp_menu()
 # gpio.register_up_function(temp_menu.on_up_pressed)
 
 
-def map_temperaturs_to_measuremnt(temperaturs, open_close_state):
+def map_temperaturs_to_measuremnt(temperaturs, open_close_state, settings):
     measurement = {
         "measurementId": str(uuid.uuid4()),
         "fireSensor": temperaturs[0],
@@ -160,7 +163,8 @@ def map_temperaturs_to_measuremnt(temperaturs, open_close_state):
         "sensor3": temperaturs[4],
         "sensor4": temperaturs[5],
         "openCloseState": open_close_state.open_close_ratio,
-        "isAutoMode": open_close_state.is_auto_mode
+        "isAutoMode": open_close_state.is_auto_mode,
+        "openCloseTreshold": settings.get_settings()['openCloseTreshold']
     }
     return measurement
 
@@ -192,7 +196,7 @@ def handle_measurment():
         temp = temp_sensors.get_temperatur_of_all_channels()
         temp_menu.update_temperaturs(temp)
         if i == 0: 
-            api_measurement = map_temperaturs_to_measuremnt(temp, open_close_state)
+            api_measurement = map_temperaturs_to_measuremnt(temp, open_close_state, settings)
             api_instance.post_measurement(api_measurement)
         current_temp = api_measurement['contentSensor']
         if settings.get_settings()['isAutoMode'] and open_close_state.is_auto_mode:

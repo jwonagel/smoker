@@ -29,7 +29,7 @@ class api:
         except Exception as e:
             print(e)
 
-        return false
+        return False
 
     def check_and_update_accesstoken(self):
         """Checks for valid token or updates"""
@@ -105,30 +105,6 @@ def login_function():
 
     return api_token
 
-
-
-
-# def test_signal_r():
-#     url = api_host + '/messagehub'
-#     hub_connection = HubConnectionBuilder() \
-#         .with_url(url, options={
-#             "verify_ssl": verify_ssl,
-#             "access_token_factory": self.get_or_update_access_token
-#         }) \
-#         .with_automatic_reconnect({
-#             "type": "raw",
-#             "keep_alive_interval": 10,
-#             "reconnect_interval": 15,
-#             "max_attempts": 15
-#         }) \
-#         .build()
-
-#     hub_connection.on('ReceiveMessage', print)
-#     hub_connection.start()
-#     message = None
-
-#     for i in range(100):
-#         time.sleep(1)
 
 
 api_instance = None

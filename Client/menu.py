@@ -9,7 +9,7 @@ class Main_menu:
         self.menu_items = []
         self.menu_items.append(Temparatur_menu(write_function, clear_function))
         self.menu_items.append(Manuel_mode_menu(write_function, clear_function, settings, open_close_state))
-        self.menu_items.append(Auto_mode_menu(write_function, clear_function, gpio, settings))
+        self.menu_items.append(Auto_mode_menu(write_function, clear_function, gpio, settings, open_close_state))
         self.menu_items.append(Info_menu(write_function, clear_function, settings))
 
         self.gpio = gpio
@@ -82,9 +82,10 @@ class Info_menu(Abstract_menu_item):
 
 class Auto_mode_menu(Abstract_menu_item):
 
-    def __init__(self, write_function, clear_function, gpio, settings):
+    def __init__(self, write_function, clear_function, gpio, settings, open_close_state):
         super().__init__(write_function, clear_function)
         self.settings = settings
+        self.open_close_state = open_close_state
         self.gpio = gpio
         
     def activate(self):
@@ -93,19 +94,19 @@ class Auto_mode_menu(Abstract_menu_item):
         self.__write_current_value()
 
     def __write_current_value(self):
-        self.write_function('Treshold {}'.format(self.settings.open_close_treshold), 2)
+        self.write_function('Treshold {}'.format(self.settings.get_settings()['openCloseTreshold'], 2))
 
     def on_up_pressed(self):
-        self.settings.is_auto_mode = True
-        while self.gpio.is_up_pressed() and self.settings.open_close_treshold < 300:
-            self.settings.open_close_treshold += 1
+        self.open_close_state.set_auto_mode()
+        while self.gpio.is_up_pressed() and self.settings.get_settings()['openCloseTreshold'] < 300:
+            self.settings.get_settings()['openCloseTreshold'] += 1
             self.__write_current_value()
             time.sleep(0.2)
 
     def on_down_pressed(self):
-        self.settings.is_auto_mode = True
-        while self.gpio.is_down_pressed() and self.settings.open_close_treshold > 20:
-            self.settings.open_close_treshold -= 1
+        self.open_close_state.set_auto_mode()
+        while self.gpio.is_down_pressed() and self.settings.get_settings()['openCloseTreshold'] > 20:
+            self.settings.get_settings()['openCloseTreshold'] -= 1
             self.__write_current_value()
             time.sleep(0.2)
 
@@ -117,7 +118,7 @@ class Manuel_mode_menu(Abstract_menu_item):
         self.open_close_state = open_close_state
     
     def on_up_pressed(self):
-        self.settings.is_auto_mode = False
+        self.open_close_state.is_auto_mode = False
         self.clear_function()
         self.write_function('Opening')
         self.open_close_state.handle_open()
