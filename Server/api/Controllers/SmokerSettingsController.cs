@@ -30,9 +30,9 @@ namespace api.Controllers
 
         [HttpGet]
         [Route("latest")]
-        public SettingsSmoker GetCurrentSettingSmoker() 
+        public async Task<SettingsSmoker> GetCurrentSettingSmoker() 
         {
-            return _smokerService.CurrentActiveSettings();
+            return await _smokerService.CurrentActiveSettings();
         }        
     }
 }

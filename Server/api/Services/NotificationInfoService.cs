@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace api.Services
 {
@@ -11,14 +13,28 @@ namespace api.Services
 
     public class NotificationInfoService : INotificationInfoService
     {
+
+        private List<NotifcationInfo> _notifcations = new List<NotifcationInfo>();
+
         public void AddNotification(NotifcationInfo notifcationInfo)
         {
-            throw new NotImplementedException();
+            _notifcations.Add(notifcationInfo);
+
+            var toDeleteTimeStamp = DateTime.Now - TimeSpan.FromHours(-2);            
+            var toDelete = _notifcations
+                .Where(n => n.TimeStamp < toDeleteTimeStamp)
+                .ToList();
+            
+            foreach(var n in toDelete) 
+            {
+                _notifcations.Remove(n);
+            }
         }
 
         public bool HasNotifcaitonInfoInTimeSpan(NotificationType type, TimeSpan timeSpan)
         {
-            throw new NotImplementedException();
+            var timeStamp = DateTime.Now - timeSpan;
+            return _notifcations.Any(n => n.TimeStamp > timeStamp && n.NotificationType == type);
         }
     }
 

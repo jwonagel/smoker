@@ -15,7 +15,7 @@ namespace api.Services
     public interface ISmokerService
     {
         Task<bool> AddMessurement(MeasurementSmoker measurement);
-        SettingsSmoker CurrentActiveSettings();
+        Task<SettingsSmoker> CurrentActiveSettings();
         Task<MeasurementClient> GetLatestMeasurement();
         Task<SettingsClient> UpdateSettings(SettingsClient settings);
         Task<SettingsClient> GetCurrentClientSettings();
@@ -48,12 +48,11 @@ namespace api.Services
             var dbMeasurement = MapToMeasurement(measurement);
             dbMeasurement.MeasurementId = Guid.NewGuid();
             dbMeasurement.TimeStampeReceived = DateTime.Now;
-            var t = CheckSettingsForNull();
+            await CheckSettingsForNull();
 
             _context.Measurements.Add(dbMeasurement);
             var saved = await _context.SaveChangesAsync() == 1;
             var t1  = _messageHub.Clients.Group(MessageHub.UserGroupName).ReceiveMessage("Measurement", "Update");
-            await t;
             await _notificationService.HandleMeaseurent(_settings, dbMeasurement);
             await t1;
             return saved;            
@@ -84,9 +83,9 @@ namespace api.Services
             return _mapper.Map<SettingsClient>(settingsDatabase);
         }
 
-        public SettingsSmoker CurrentActiveSettings()
+        public async Task<SettingsSmoker> CurrentActiveSettings()
         {
-            CheckSettingsForNull().RunSynchronously();
+            await CheckSettingsForNull();
             var res = _mapper.Map<SettingsSmoker>(_settings);
             return res;
         }
