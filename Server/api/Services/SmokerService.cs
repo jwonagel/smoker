@@ -50,6 +50,14 @@ namespace api.Services
             dbMeasurement.TimeStampeReceived = DateTime.Now;
             await CheckSettingsForNull();
 
+            if (_settings.OpenCloseTreshold != measurement.OpenCloseTreshold)
+            {
+                _settings = await GetActiveSettings();
+                _settings.OpenCloseTreshold = measurement.OpenCloseTreshold;
+                _context.Update(_settings);
+                await _messageHub.Clients.Group(MessageHub.UserGroupName).ReceiveMessage("Settings", "Update");      
+            }
+
             _context.Measurements.Add(dbMeasurement);
             var saved = await _context.SaveChangesAsync() == 1;
             var t1  = _messageHub.Clients.Group(MessageHub.UserGroupName).ReceiveMessage("Measurement", "Update");

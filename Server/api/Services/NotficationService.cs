@@ -45,7 +45,7 @@ namespace api.Services
         private void HandleFireTemperatur()
         {
             if(_settings.FireNotifcationTemperatur > _measurement.FireSensor &&
-             _notificationInfoService.HasNotifcaitonInfoInTimeSpan(NotificationType.FireTemperatur, _silentTimeAfterNotification))
+              !_notificationInfoService.HasNotifcaitonInfoInTimeSpan(NotificationType.FireTemperatur, _silentTimeAfterNotification))
             {
                 var temp = _settings.FireNotifcationTemperatur;
                 var message = $"Temperatur des Feuerraumes ist unter {temp:F1} C gefallen.";

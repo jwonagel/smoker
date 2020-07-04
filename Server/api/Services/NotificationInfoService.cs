@@ -20,7 +20,7 @@ namespace api.Services
         {
             _notifcations.Add(notifcationInfo);
 
-            var toDeleteTimeStamp = DateTime.Now - TimeSpan.FromHours(-2);            
+            var toDeleteTimeStamp = DateTime.Now - TimeSpan.FromHours(2);            
             var toDelete = _notifcations
                 .Where(n => n.TimeStamp < toDeleteTimeStamp)
                 .ToList();
