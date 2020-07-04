@@ -57,6 +57,28 @@ namespace AuthServer
                         "smokerapi"
                     }
                 },
+                new Client
+                {
+                    ClientName = "Dev Client",
+                    ClientId = "devclient",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    RequireConsent = false,
+                    AllowAccessTokensViaBrowser = true,
+                    RedirectUris = new List<string> {
+                        "https://localhost:4200/signin-oidc",
+                        "https://localhost:4200/redirect-silent-renew"
+                    },
+                    AccessTokenLifetime = 180,
+                    PostLogoutRedirectUris = new List<string> {
+                        $"https://localhost:4200"
+                    },
+                    AllowedScopes = new [] {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "roles",
+                        "smokerapi"
+                    }
+                },
                 new Client()
                 {
                     ClientName = "Smoker",

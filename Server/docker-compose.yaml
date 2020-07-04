@@ -62,10 +62,11 @@ services:
       - ./data/certbot/conf:/cert
     environment: 
       - connectionString=${connectionString}
-      - Authority=https://roadchiefs.ddns.net/auth/
+      - Authority=https://roadchiefs.ddns.net/auth
       - ASPNETCORE_URLS=https://+:443
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${pass}
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/cert/live/roadchiefs.ddns.net/certificate.pfx
+      - slackWebHook=${slackWebHook}
     deploy:
       restart_policy:
         condition: on-failure

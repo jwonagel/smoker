@@ -49,9 +49,8 @@ namespace api
                     mysqlOptions =>
                         mysqlOptions.ServerVersion(new ServerVersion(new Version(10, 4, 6), ServerType.MariaDb))));
 
-
-
-            services.AddCors(options =>
+            
+           services.AddCors(options =>
             {
             options.AddPolicy(name: MyAllowSpecificOrigins,
                 builder =>
@@ -79,7 +78,15 @@ namespace api
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<ISmokerService, SmokerService>();
             services.AddScoped<IUserInfoService, UserInfoService>();
+            services.AddScoped<INotficationService, NotficationService>();
             services.AddSingleton<ISmokerConnectionService, SmokerConnectionService>();
+            services.AddSingleton<INotificationInfoService, NotificationInfoService>();
+
+            services.AddHttpClient<ISlackMessageSender, SlackMessageSender>(c => 
+            {
+                c.BaseAddress = new Uri("https://hooks.slack.com");
+            });
+
             services.AddControllers();
 
             // Register the Swagger generator, defining 1 or more Swagger documents

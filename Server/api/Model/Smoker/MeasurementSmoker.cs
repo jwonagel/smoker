@@ -23,5 +23,7 @@ namespace api.Model.Smoker
         public double OpenCloseState { get; set; }
 
         public bool IsAutoMode { get; set; }
+
+        public int OpenCloseTreshold { get; set;}
     }
 }

@@ -15,7 +15,7 @@ namespace api.Services
     public interface ISmokerService
     {
         Task<bool> AddMessurement(MeasurementSmoker measurement);
-        SettingsSmoker CurrentActiveSettings();
+        Task<SettingsSmoker> CurrentActiveSettings();
         Task<MeasurementClient> GetLatestMeasurement();
         Task<SettingsClient> UpdateSettings(SettingsClient settings);
         Task<SettingsClient> GetCurrentClientSettings();
@@ -29,15 +29,18 @@ namespace api.Services
         private readonly IHubContext<MessageHub, IMessageHub> _messageHub;
         private IUserInfoService _userInfoService;
         private readonly ISmokerConnectionService _smokerConnectionService;
+        private readonly INotficationService _notificationService;
 
+        private Settings _settings;
 
-        public SmokerService(SmokerDBContext context, IMapper mapper, IHubContext<MessageHub, IMessageHub> messageHub, IUserInfoService userInfoService, ISmokerConnectionService smokerConnectionService)
+        public SmokerService(SmokerDBContext context, IMapper mapper, IHubContext<MessageHub, IMessageHub> messageHub, IUserInfoService userInfoService, ISmokerConnectionService smokerConnectionService, INotficationService notificationService = null)
         {
             _context = context;
             _mapper = mapper;
             _messageHub = messageHub;
             _userInfoService = userInfoService;
             _smokerConnectionService = smokerConnectionService;
+            _notificationService = notificationService;
         }
 
         public async Task<bool> AddMessurement(MeasurementSmoker measurement)
@@ -45,14 +48,32 @@ namespace api.Services
             var dbMeasurement = MapToMeasurement(measurement);
             dbMeasurement.MeasurementId = Guid.NewGuid();
             dbMeasurement.TimeStampeReceived = DateTime.Now;
+            await CheckSettingsForNull();
+
+            if (_settings.OpenCloseTreshold != measurement.OpenCloseTreshold)
+            {
+                _settings = await GetActiveSettings();
+                _settings.OpenCloseTreshold = measurement.OpenCloseTreshold;
+                _context.Update(_settings);
+                await _messageHub.Clients.Group(MessageHub.UserGroupName).ReceiveMessage("Settings", "Update");      
+            }
 
             _context.Measurements.Add(dbMeasurement);
-            
             var saved = await _context.SaveChangesAsync() == 1;
-            await _messageHub.Clients.Group(MessageHub.UserGroupName).ReceiveMessage("Measurement", "Update");
-
+            var t1  = _messageHub.Clients.Group(MessageHub.UserGroupName).ReceiveMessage("Measurement", "Update");
+            await _notificationService.HandleMeaseurent(_settings, dbMeasurement);
+            await t1;
             return saved;            
         }
+
+        private async Task CheckSettingsForNull()
+        {
+            if(_settings == null)
+            {
+                _settings = await GetActiveSettings();
+            }
+        }
+
 
         public async Task<SettingsClient> UpdateSettings(SettingsClient settings)
         {
@@ -61,30 +82,35 @@ namespace api.Services
             
             settingsDatabase.LastSettingsUpdate = DateTime.Now;
             settingsDatabase.LastSettingsUpdateUser = _userInfoService.FirstName + " " + _userInfoService.LastName;
+            _settings = settingsDatabase;
 
             await _context.SaveChangesAsync();
             await _messageHub.Clients.All.ReceiveMessage("Settings", "Update").ConfigureAwait(false);      
 
+
             return _mapper.Map<SettingsClient>(settingsDatabase);
         }
 
-        public SettingsSmoker CurrentActiveSettings()
+        public async Task<SettingsSmoker> CurrentActiveSettings()
         {
-            var currentSetting = _context.Settings
+            await CheckSettingsForNull();
+            var res = _mapper.Map<SettingsSmoker>(_settings);
+            return res;
+        }
+
+        private Task<Settings> GetActiveSettings()
+        {
+            return _context.Settings
                 .Include(s => s.Alerts)
                 .OrderByDescending(s => s.LastSettingsActivation)
-                .FirstOrDefault();
-
-            var res = _mapper.Map<SettingsSmoker>(currentSetting);
-
-            return res;
+                .FirstOrDefaultAsync();
         }
 
 
         public async Task<SettingsClient> GetCurrentClientSettings()
         {
-            var settings = await _context.Settings.FirstAsync();
-            return _mapper.Map<SettingsClient>(settings);
+            await CheckSettingsForNull();
+            return _mapper.Map<SettingsClient>(_settings);
         }
 
         public async Task<MeasurementClient> GetLatestMeasurement()
@@ -110,6 +136,8 @@ namespace api.Services
                 Sensor3 = measurement.Sensor3,
                 Sensor4 = measurement.Sensor4,
                 TimeStampSmoker = measurement.TimeStamp,
+                OpenCloseState = measurement.OpenCloseState,
+                IsAutoMode = measurement.IsAutoMode
             };
         }
 
